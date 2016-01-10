@@ -1,0 +1,8 @@
+# Eclipse stuff not related to projects
+.metadata
+.recommenders
+
+# IDEA project files
+.idea
+*.eml
+*.iml
