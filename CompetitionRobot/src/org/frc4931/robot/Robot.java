@@ -23,9 +23,8 @@
 /* Created Sun Jan 10 12:59:55 CST 2016 */
 package org.frc4931.robot;
 
-import org.strongback.Strongback;
-
 import edu.wpi.first.wpilibj.IterativeRobot;
+import org.strongback.Strongback;
 
 public class Robot extends IterativeRobot {
 
@@ -48,5 +47,4 @@ public class Robot extends IterativeRobot {
         // Tell Strongback that the robot is disabled so it can flush and kill commands.
         Strongback.disable();
     }
-
 }
