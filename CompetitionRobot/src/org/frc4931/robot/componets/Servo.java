@@ -28,7 +28,7 @@ package org.frc4931.robot.componets;
  * 
  * @author Julian
  */
-interface Servo 
+public interface Servo 
 {
 	/**
 	 * getTargetAngle returns the last angle the servo was
