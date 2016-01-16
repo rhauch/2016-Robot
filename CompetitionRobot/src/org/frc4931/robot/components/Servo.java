@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-package org.frc4931.robot.componets;
+package org.frc4931.robot.components;
 /**
  * Servo interface lays out what a servo is
  * 
