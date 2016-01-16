@@ -22,7 +22,7 @@
 
 package org.frc4931.robot;
 
-import  org.frc4931.robot.componets.Servo;
+import  org.frc4931.robot.components.Servo;
 
 /**
  * Periscope because we have discussed about having a camera mounted on a 
@@ -111,13 +111,9 @@ public class Periscope
 	public void setYaw(double angle)
 	{
 		if(angle>180)
-		{
 			angle=180.0;
-		}
 		if(angle<0)
-		{
 			angle=0.0;
-		}
 		yawController.moveToAngle(angle);
 	}
 }
