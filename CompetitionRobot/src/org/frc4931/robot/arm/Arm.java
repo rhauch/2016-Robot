@@ -98,7 +98,7 @@ public class Arm {
      */
     public void zero() {
         // I prefer using this rather than AngleSensor.zero(). Stack traces can build up for getAngle() for an
-        // angle sensor that is zeroed multiple times.
+        // angle sensor that is zeroed multiple times, depending upon the implementation.
         zeroAngle = angleSensor.getAngle();
     }
 
