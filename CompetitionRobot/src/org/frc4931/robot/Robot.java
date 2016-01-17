@@ -26,6 +26,8 @@ package org.frc4931.robot;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import org.frc4931.robot.arm.Arm;
 import org.frc4931.robot.arm.CalibrateArm;
+import org.frc4931.robot.components.DummyIMU;
+import org.frc4931.robot.components.Locator;
 import org.frc4931.robot.drive.DriveSystem;
 import org.frc4931.robot.drive.TimedDrive;
 import org.frc4931.robot.roller.Roller;
@@ -78,7 +80,8 @@ public class Robot extends IterativeRobot {
         Motor leftMotors = Motor.compose(leftFrontMotor, leftRearMotor);
         Motor rightMotors = Motor.compose(rightFrontMotor, rightRearMotor).invert();
         TankDrive tankDrive = new TankDrive(leftMotors, rightMotors);
-        drive = new DriveSystem(tankDrive);
+        Locator locator = new Locator(new DummyIMU());
+        drive = new DriveSystem(tankDrive, locator);
 
         // Initialize the subsystems ...
         TalonSRX armMotor = Hardware.Motors.talonSRX(ARM_MOTOR_CAN_ID, ARM_PULSES_PER_DEGREE);

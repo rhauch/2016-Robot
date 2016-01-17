@@ -22,6 +22,8 @@
 
 package org.frc4931.robot.drive;
 
+import org.frc4931.robot.components.Locator;
+import org.frc4931.robot.components.MockIMU;
 import org.junit.Before;
 import org.junit.Test;
 import org.strongback.drive.TankDrive;
@@ -33,13 +35,15 @@ import static org.junit.Assert.assertEquals;
 public class TestDriveSystem {
     private MockMotor leftMotor;
     private MockMotor rightMotor;
+    private MockIMU imu;
     private DriveSystem driveSystem;
 
     @Before
     public void beforeEach() {
         leftMotor = Mock.stoppedMotor();
         rightMotor = Mock.stoppedMotor();
-        driveSystem = new DriveSystem(new TankDrive(leftMotor, rightMotor));
+        imu = new MockIMU();
+        driveSystem = new DriveSystem(new TankDrive(leftMotor, rightMotor), new Locator(imu));
     }
 
     /**
