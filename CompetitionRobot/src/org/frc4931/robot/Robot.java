@@ -29,7 +29,8 @@ import org.strongback.Strongback;
 public class Robot extends IterativeRobot {
 
     @Override
-    public void robotInit() {
+    public void robotInit() 
+    {
     }
 
     @Override
