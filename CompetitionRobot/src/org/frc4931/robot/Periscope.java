@@ -23,6 +23,7 @@
 package org.frc4931.robot;
 
 import  org.frc4931.robot.components.Servo;
+import org.strongback.command.Requirable;
 
 /**
  * Periscope because we have discussed about having a camera mounted on a 
@@ -32,7 +33,7 @@ import  org.frc4931.robot.components.Servo;
  *
  *
  */
-public class Periscope 
+public class Periscope implements Requirable
 {
 	private static final double DEPLOY = 90;
 	private static final double RETRACT=0;
