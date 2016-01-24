@@ -2,6 +2,8 @@
 .metadata
 .recommenders
 
+tests
+
 # IDEA project files
 .idea
 *.eml
