@@ -1,17 +1,28 @@
-package org.frc4931.robot;
+package org.frc4931.robot.commands.drawbridge;
 
 import org.frc4931.robot.arm.Arm;
 
-public class DrawbridgeCommandGroup extends org.strongback.command.Command
+public class DrawbridgeCommandGroup extends org.strongback.command.CommandGroup
 {
 	
 	private Arm arm;
-	@Override
-	public boolean execute() 
+	
+	public DrawbridgeCommandGroup(Arm a)
 	{
-		super(arm)
+		this.raise();
+		this.simultaneously(commands)
 		
-		return false;
 	}
-
+	public void raise()
+	{
+		arm.raise();
+	}
+	public void stop()
+	{
+		arm.stop();
+	}
+	public void lower()
+	{
+		arm.lower();
+	}
 }
