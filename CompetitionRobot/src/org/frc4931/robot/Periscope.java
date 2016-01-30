@@ -25,6 +25,8 @@ package org.frc4931.robot;
 import  org.frc4931.robot.components.Servo;
 import org.strongback.command.Requirable;
 
+import edu.wpi.first.wpilibj.CameraServer;
+
 /**
  * Periscope because we have discussed about having a camera mounted on a 
  * pitch and yaw head. 
@@ -39,6 +41,7 @@ public class Periscope implements Requirable
 	private static final double RETRACT=0;
 	private final Servo pitchController;
 	private final Servo yawController;
+	private final CameraServer camera;
 	//TODO figure out how camera works
 	
 	/**
@@ -46,10 +49,14 @@ public class Periscope implements Requirable
 	 * @param pitch {@link Servo} that controls pitch
 	 * @param yaw {@link Servo} that controls yaw
 	 */
-	public Periscope(Servo pitch,Servo yaw)
+	public Periscope(Servo pitch,Servo yaw,CameraServer c)
 	{
 		pitchController=pitch;
 		yawController=yaw;
+		camera=c.getInstance();
+        camera.setQuality(50);
+        //the camera name (ex "cam0") can be found through the roborio web interface
+        camera.startAutomaticCapture("cam0");
 	}
 	
 	/**
