@@ -23,23 +23,56 @@
 /* Created Sun Jan 10 12:59:55 CST 2016 */
 package org.frc4931.robot;
 
+import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import org.strongback.Strongback;
+import org.strongback.components.Motor;
+import org.strongback.components.Switch;
+import org.strongback.components.TalonSRX;
+import org.strongback.components.ui.ContinuousRange;
+import org.strongback.components.ui.FlightStick;
+import org.strongback.hardware.Hardware;
 
 public class Robot extends IterativeRobot {
-
-    @Override
+	private static final int KICKER_MOTOR_CAN_ID = 0;
+	private TalonSRX motor;
+	private FlightStick joystick;
+	private Switch trigger;
+	private ContinuousRange throttle;
+	
+	private boolean velocityPositive = true, buttonDown = false;
+	
+	@Override
     public void robotInit() {
+		Strongback.configure().recordDataToFile("/home/lvuser/").recordEventsToFile("/home/lvuser/",2097152);
     }
 
     @Override
     public void teleopInit() {
         // Start Strongback functions ...
         Strongback.start();
+        motor = Hardware.Motors.talonSRX(KICKER_MOTOR_CAN_ID);
+        joystick = Hardware.HumanInterfaceDevices.logitechAttack3D(0);
+        trigger = joystick.getTrigger();
+        throttle = joystick.getThrottle();
     }
 
     @Override
     public void teleopPeriodic() {
+    	if(trigger.isTriggered()){
+    		if(!buttonDown){
+    			velocityPositive = !velocityPositive;
+    			buttonDown = true;
+    		}
+    	}
+    	else{
+    		buttonDown = false;
+    	}
+    	double speed = Math.abs(throttle.read());
+    	if(velocityPositive == true)
+    		motor.setSpeed(speed);
+    	else
+    	    motor.setSpeed(-speed);
     }
 
     @Override
