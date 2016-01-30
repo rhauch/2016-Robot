@@ -23,14 +23,20 @@
 /* Created Sun Jan 10 12:59:55 CST 2016 */
 package org.frc4931.robot;
 
+import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import org.strongback.Strongback;
 
 public class Robot extends IterativeRobot {
 
+	CameraServer camera;
     @Override
     public void robotInit() 
     {
+    	camera = CameraServer.getInstance();
+        camera.setQuality(50);
+        //the camera name (ex "cam0") can be found through the roborio web interface
+        camera.startAutomaticCapture("cam0");
     }
 
     @Override
