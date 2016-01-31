@@ -29,25 +29,18 @@ public class RobotConversion
 		NetworkTable.setIPAddress("192.168.1.130");
 		table = NetworkTable.getTable("locator");
 	}
-	
-	public int metersToPixels(double mp)
-	{
-		int i = (int) (mp*PIXELS_PER_METER);
-		System.out.println(i);
-		return i;
-	}
 
 	public int xCoord()
 	{
-		double x = (table.getNumber("posY", 0)+ startX) *PIXELS_PER_METER;
-		//System.out.println(x);
+		double x = (table.getNumber("posY", 0)+ startX);
+		//System.out.println(x/PIXELS_PER_METER);
 		return (int) x;
 	}
 	
 	public int yCoord()
 	{
-		double y = (table.getNumber("posX", 0)+ startY) *PIXELS_PER_METER;
-		//System.out.println(y);
+		double y = (table.getNumber("posX", 0)+ startY);
+		//System.out.println(y/PIXELS_PER_METER);
 		return (int) y;
 	}
 	
