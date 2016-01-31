@@ -22,6 +22,7 @@
 
 package org.frc4931.robot.arm;
 
+import org.strongback.command.Requirable;
 import org.strongback.components.AngleSensor;
 import org.strongback.components.Motor;
 import org.strongback.components.Switch;
@@ -31,7 +32,8 @@ import org.strongback.components.TalonSRX;
  * The Arm is a subsystem of the robot that can be used to raise and lower to specific angles.
  * It is used to traverse tall defenses and open gates.
  */
-public class Arm {
+public class Arm implements Requirable
+{
     public static final double MOTOR_SPEED = 1.0;
 
     private final Motor motor;
