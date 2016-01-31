@@ -1,20 +1,14 @@
 package application;
 	
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
+
 import javafx.scene.input.MouseEvent;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.event.EventHandler;
-import javafx.geometry.Insets;
 import javafx.stage.Stage;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.layout.GridPane;
 
 public class LiveMap extends Application {
 	private Map map = new Map();

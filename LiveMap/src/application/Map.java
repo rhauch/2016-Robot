@@ -3,9 +3,11 @@ package application;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.transform.Rotate;
+import static application.MetersToPixels.convert;
 
 public class Map {
 	private RobotConversion robot;
+	private static final double PIXELS_PER_METER = 49.382716049;
 	private Image imageField = new Image("/application/Field.png",814,400,true,false);
 	private Image imageBA = new Image("/application/BlueDot.png",39,39,true,false);
 	private Image imageRA = new Image("/application/RedDot.png",39,39,true,false);
@@ -30,8 +32,8 @@ public class Map {
 		else
 		{
 			gc.drawImage(imageField,0,0);
-			gc.drawImage(imageSP, 332, 141, 39, 39);
-			gc.drawImage(imageSP, 332, 241, 39, 39);
+			gc.drawImage(imageSP, convert(2), convert(1), 39, 39);
+			gc.drawImage(imageSP, convert(2), convert(2), 39, 39);
 		}
 	}
 	
@@ -41,21 +43,21 @@ public class Map {
 		{
 			sx = x;
 			sy = y;
-			if((332<=sx && sx<=371) && (141<=sy && sy<=180))
+			if((convert(2)<=sx && sx<=convert(2.762)) && (convert(1)<=sy && sy<=convert(1.762)))
 			{
 			flag = true;
-			robot = new RobotConversion(332, 141);
-			System.out.println(x +" "+ y +" " + (x+50) +" "+ (y+50));
+			robot = new RobotConversion(convert(2), convert(1));
+			System.out.println((x/PIXELS_PER_METER) +" "+ (y/PIXELS_PER_METER));
 			}
-			else if((332<=sx && sx<=382) && (241<=sy && sy<=291))
+			else if((convert(2)<=sx && sx<=convert(2.762)) && (convert(2)<=sy && sy<=convert(2.762)))
 			{
 			flag = true;
-			robot = new RobotConversion(332, 241);
-			System.out.println(x +" "+ y +" " + (x+50) +" "+ (y+50));
+			robot = new RobotConversion(convert(2), convert(2));
+			System.out.println((x/PIXELS_PER_METER) +" "+ (y/PIXELS_PER_METER));
 			}
 		}
 		else
-			System.out.println(x +" "+ y +" " + (x+50) +" "+ (y+50));
+			System.out.println((x/PIXELS_PER_METER) +" "+ (y/PIXELS_PER_METER));
 	}
 	
 	private void rotate(GraphicsContext gc, double angle, double px, double py) {
