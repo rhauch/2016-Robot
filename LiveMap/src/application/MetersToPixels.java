@@ -8,9 +8,15 @@ public class MetersToPixels {
 	 * @param mp meters to be converted to pixels
 	 * @return
 	 */
-	public static int convert(double mp)
+	public static int convertPixels(double mp)
 	{
 		int i = (int) (mp*PIXELS_PER_METER);
+		return i;
+	}
+	
+	public static double convertMeters(int pm)
+	{
+		double i = (double) (pm/PIXELS_PER_METER);
 		return i;
 	}
 }
