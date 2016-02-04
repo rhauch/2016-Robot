@@ -25,11 +25,31 @@ package org.frc4931.robot;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
 import org.strongback.Strongback;
+import org.strongback.components.Switch;
+import org.strongback.components.TalonSRX;
+import org.strongback.components.ui.ContinuousRange;
+import org.strongback.components.ui.FlightStick;
+import org.strongback.hardware.Hardware;
 
 public class Robot extends IterativeRobot {
-
-    @Override
+	private static final int KICKER_MOTOR_CAN_ID = 0;
+	private TalonSRX motor;
+	private FlightStick joystick;
+	private Switch trigger;
+	
+	// pitch = forward & backward (inverted), roll = left & right, yaw = twist
+	private ContinuousRange pitch, roll, yaw, throttle;
+	
+	@Override
     public void robotInit() {
+		Strongback.configure().recordDataToFile("/home/lvuser/").recordEventsToFile("/home/lvuser/",2097152);
+        motor = Hardware.Motors.talonSRX(KICKER_MOTOR_CAN_ID);
+        joystick = Hardware.HumanInterfaceDevices.logitechAttack3D(0);
+        trigger = joystick.getTrigger();
+        pitch = joystick.getPitch().invert();
+        roll = joystick.getRoll();
+        yaw = joystick.getYaw();
+        throttle = joystick.getThrottle();
     }
 
     @Override
@@ -40,6 +60,16 @@ public class Robot extends IterativeRobot {
 
     @Override
     public void teleopPeriodic() {
+    	double speed = 0.0;
+    	if(Math.abs(pitch.read()) < 0.3)
+    		speed = pitch.read();
+    	else if(Math.abs(roll.read()) < 0.3)
+    		speed = roll.read();
+    	else if(Math.abs(yaw.read()) < 0.3)
+    		speed = yaw.read();
+    	double throttleAmount = throttle.read();
+    	motor.setSpeed(speed*throttleAmount);
+    	System.out.println(speed);
     }
 
     @Override
