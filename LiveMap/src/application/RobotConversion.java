@@ -39,14 +39,14 @@ public class RobotConversion
 
 	public int xCoord()
 	{
-		double x = (table.getNumber("posY", 0)+ startX) *PIXELS_PER_METER;
+		double x = (table.getNumber("posY", 0)+ startX);
 		//System.out.println(x);
 		return (int) x;
 	}
 	
 	public int yCoord()
 	{
-		double y = (table.getNumber("posX", 0)+ startY) *PIXELS_PER_METER;
+		double y = (table.getNumber("posX", 0)+ startY);
 		//System.out.println(y);
 		return (int) y;
 	}
