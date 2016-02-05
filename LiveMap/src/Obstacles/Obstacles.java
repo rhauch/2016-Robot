@@ -1,4 +1,6 @@
 package Obstacles;
+import java.util.Scanner;
+
 /**
  * 
  * @author Julian Nieto
@@ -16,25 +18,34 @@ public class Obstacles
 	public final static int SALLY_PORT = 7;
 	public final static int ROUGH_TERRAIN = 8;
 
-	private Positions position;
 	private int identifierNum;
 	/**
 	 * Only pass the positions of the constants in the Position class
 	 * @param o identifier number only Constants
 	 * @param x Position  in constants
 	 */
-	public Obstacles(int o,Positions x)
+	public Obstacles(int o)
 	{
-		identifierNum=o;
-		position=x;
-		
+		if(o<=8)
+		{
+			identifierNum=o;
+		}
+		else
+		{
+			//TODO create a better failsafe
+			System.out.println("Please input a number between 0-8");
+			while(2+2==4)
+			{
+				break;
+			}
+		}
 	}
 	public int getObstacle()
 	{
 		return identifierNum;
 	}
-	public Positions getPos()
+	public String toString()
 	{
-		return position;
-	} 
+		return ""+identifierNum;
+	}
 }

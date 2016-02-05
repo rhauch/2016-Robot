@@ -18,14 +18,14 @@ public class Map {
 	{
 		if(flag == true)
 		{
-		int xCord = robot.xCoord();
-		int yCord = robot.yCoord();
-		double rotation = robot.rotation();
-		gc.drawImage(imageField,0,0);
-		gc.save();
-		rotate(gc, rotation, xCord + imageBA.getWidth() / 2, yCord + imageBA.getHeight() / 2);
-		gc.drawImage(imageBA, xCord, yCord, 39, 39);
-		gc.restore();
+			int xCord = robot.xCoord();
+			int yCord = robot.yCoord();
+			double rotation = robot.rotation();
+			gc.drawImage(imageField,0,0);
+			gc.save();
+			rotate(gc, rotation, xCord + imageBA.getWidth() / 2, yCord + imageBA.getHeight() / 2);
+			gc.drawImage(imageBA, xCord, yCord, 39, 39);
+			gc.restore();
 		}
 		else
 		{
@@ -43,15 +43,15 @@ public class Map {
 			sy = y;
 			if((332<=sx && sx<=371) && (141<=sy && sy<=180))
 			{
-			flag = true;
-			robot = new RobotConversion(332, 141);
-			System.out.println(x +" "+ y +" " + (x+50) +" "+ (y+50));
+				flag = true;
+				robot = new RobotConversion(332, 141);
+				System.out.println(x +" "+ y +" " + (x+50) +" "+ (y+50));
 			}
 			else if((332<=sx && sx<=382) && (241<=sy && sy<=291))
 			{
-			flag = true;
-			robot = new RobotConversion(332, 241);
-			System.out.println(x +" "+ y +" " + (x+50) +" "+ (y+50));
+				flag = true;
+				robot = new RobotConversion(332, 241);
+				System.out.println(x +" "+ y +" " + (x+50) +" "+ (y+50));
 			}
 		}
 		else
