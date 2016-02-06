@@ -1,6 +1,5 @@
 package application;
 
-import static application.MetersToPixels.convertPixels;
 
 public class StartPos 
 {
