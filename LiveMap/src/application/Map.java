@@ -2,14 +2,22 @@ package application;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Rotate;
 import static application.MetersToPixels.convertPixels;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+
 import static application.MetersToPixels.convertMeters;
 
 public class Map {
 	private RobotConversion robot;
-	private StartPos sp1, sp2, sp3, sp4;
+	private StartPos[] sp = new StartPos[6];
 	private Side side;
+	private Rectangle[] startBS = {new Rectangle(1,1,39,39),new Rectangle(7,5,39,39),new Rectangle(4,5,39,39)
+		,new Rectangle(3,2,39,39),new Rectangle(3,6,39,39),new Rectangle(4,7.2,39,39)};
+	private Rectangle[] startRS = {new Rectangle(8.2,4.1,39,39),new Rectangle(9.4,5.2,39,39),new Rectangle(14.8,6.8,39,39)
+		,new Rectangle(13.9,3.9,39,39),new Rectangle(11.6,3.1,39,39),new Rectangle(15.5,5.3,39,39)};
 	private Image imageField = new Image("/application/Field.png",814,400,true,false);
 	private Image imageBA = new Image("/application/BlueDot.png",39,39,true,false);
 	private Image imageRA = new Image("/application/RedDot.png",39,39,true,false);
@@ -44,26 +52,20 @@ public class Map {
 			if(side.getSide())
 			{
 				gc.drawImage(imageField,0,0);
-				gc.drawImage(imageSP, convertPixels(3), convertPixels(5), 39, 39);
-				sp1 = new StartPos(3,5);
-				gc.drawImage(imageSP, convertPixels(3), convertPixels(1), 39, 39);
-				sp2 = new StartPos(3,1);
-				gc.drawImage(imageSP, convertPixels(4.5), convertPixels(3), 39, 39);
-				sp3 = new StartPos(4.5,3);
-				gc.drawImage(imageSP, convertPixels(2), convertPixels(2), 39, 39);
-				sp4 = new StartPos(2,2);
+				for(int i=0;i<6;i++)
+				{
+				gc.fillRect(convertPixels(startBS[i].getX()), convertPixels(startBS[i].getY()), startBS[i].getWidth(), startBS[i].getHeight());
+				sp[i] = new StartPos(startBS[i].getX(),startBS[i].getY());
+				}
 			}
 			else
 			{
 				gc.drawImage(imageField,0,0);
-				gc.drawImage(imageSP, convertPixels(13), convertPixels(5), 39, 39);
-				sp1 = new StartPos(13,5);
-				gc.drawImage(imageSP, convertPixels(8.2417), convertPixels(1), 39, 39);
-				sp2 = new StartPos(8.2417,1);
-				gc.drawImage(imageSP, convertPixels(14.5), convertPixels(3), 39, 39);
-				sp3 = new StartPos(14.5,3);
-				gc.drawImage(imageSP, convertPixels(12), convertPixels(2), 39, 39);
-				sp4 = new StartPos(12,2);
+				for(int i=0;i<6;i++)
+				{
+				gc.fillRect(convertPixels(startRS[i].getX()), convertPixels(startRS[i].getY()), startRS[i].getWidth(), startRS[i].getHeight());
+				sp[i] = new StartPos(startRS[i].getX(),startRS[i].getY());
+				}
 			}
 		}
 		else
@@ -87,34 +89,17 @@ public class Map {
 			{
 				sx = (double) (convertMeters(x));
 				sy = (double) (convertMeters(y));
-				if(sp1.withinBoundries(sx, sy))
+				for(int i = 0; i<6;i++)
 				{
-					flag = true;
-					robot = new RobotConversion(convertPixels(sp1.getX()), convertPixels(sp1.getY()));
-					robot.setRotation(-90);
-					//System.out.println((x/PIXELS_PER_METER) +" "+ (y/PIXELS_PER_METER));
+					if(sp[i].withinBoundries(sx, sy))
+					{
+						flag = true;
+						robot = new RobotConversion(convertPixels(sp[i].getX()), convertPixels(sp[i].getY()));
+						robot.setRotation(-90);
+						//System.out.println((x/PIXELS_PER_METER) +" "+ (y/PIXELS_PER_METER));
+					}
 				}
-				else if(sp2.withinBoundries(sx, sy))
-				{
-					flag = true;
-					robot = new RobotConversion(convertPixels(sp2.getX()), convertPixels(sp2.getY()));
-					robot.setRotation(-90);
-					//System.out.println((x/PIXELS_PER_METER) +" "+ (y/PIXELS_PER_METER));
-				}
-				else if(sp3.withinBoundries(sx, sy))
-				{
-					flag = true;
-					robot = new RobotConversion(convertPixels(sp3.getX()), convertPixels(sp3.getY()));
-					robot.setRotation(-90);
-					//System.out.println((x/PIXELS_PER_METER) +" "+ (y/PIXELS_PER_METER));
-				}
-				else if(sp4.withinBoundries(sx, sy))
-				{
-					flag = true;
-					robot = new RobotConversion(convertPixels(sp4.getX()), convertPixels(sp4.getY()));
-					robot.setRotation(-90);
-					//System.out.println((x/PIXELS_PER_METER) +" "+ (y/PIXELS_PER_METER));
-				}
+
 			}
 			else
 				System.out.println((convertMeters(x)) +" "+ (convertMeters(y)));
@@ -127,33 +112,15 @@ public class Map {
 			{
 				sx = (double) (convertMeters(x));
 				sy = (double) (convertMeters(y));
-				if(sp1.withinBoundries(sx, sy))
+				for(int i = 0; i<6;i++)
 				{
-					flag = true;
-					robot = new RobotConversion(convertPixels(sp1.getX()), convertPixels(sp1.getY()));
-					robot.setRotation(90);
-					//System.out.println((x/PIXELS_PER_METER) +" "+ (y/PIXELS_PER_METER));
-				}
-				else if(sp2.withinBoundries(sx, sy))
-				{
-					flag = true;
-					robot = new RobotConversion(convertPixels(sp2.getX()), convertPixels(sp2.getY()));
-					robot.setRotation(90);
-					//System.out.println((x/PIXELS_PER_METER) +" "+ (y/PIXELS_PER_METER));
-				}
-				else if(sp3.withinBoundries(sx, sy))
-				{
-					flag = true;
-					robot = new RobotConversion(convertPixels(sp3.getX()), convertPixels(sp3.getY()));
-					robot.setRotation(90);
-					//System.out.println((x/PIXELS_PER_METER) +" "+ (y/PIXELS_PER_METER));
-				}
-				else if(sp4.withinBoundries(sx, sy))
-				{
-					flag = true;
-					robot = new RobotConversion(convertPixels(sp4.getX()), convertPixels(sp4.getY()));
-					robot.setRotation(90);
-					//System.out.println((x/PIXELS_PER_METER) +" "+ (y/PIXELS_PER_METER));
+					if(sp[i].withinBoundries(sx, sy))
+					{
+						flag = true;
+						robot = new RobotConversion(convertPixels(sp[i].getX()), convertPixels(sp[i].getY()));
+						robot.setRotation(90);
+						//System.out.println((x/PIXELS_PER_METER) +" "+ (y/PIXELS_PER_METER));
+					}
 				}
 			}
 			else
