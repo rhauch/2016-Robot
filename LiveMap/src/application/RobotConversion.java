@@ -1,6 +1,8 @@
 package application;
 
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
+import static application.MetersToPixels.convertPixels;
+import static application.MetersToPixels.convertMeters;
 
 public class RobotConversion 
 {
@@ -36,7 +38,8 @@ public class RobotConversion
 	 */
 	public int xCoord()
 	{
-		double x = (table.getNumber("posY", 0)+ startX);
+		double x = convertPixels(table.getNumber("posY", 0))+ startX;
+		System.out.println(x +" "+ startX);
 		return (int) x;
 	}
 	
@@ -46,7 +49,8 @@ public class RobotConversion
 	 */
 	public int yCoord()
 	{
-		double y = (table.getNumber("posX", 0)+ startY);
+		double y = convertPixels(table.getNumber("posX", 0))+ startY;
+		System.out.println(y +" "+ startY);
 		return (int) y;
 	}
 	
