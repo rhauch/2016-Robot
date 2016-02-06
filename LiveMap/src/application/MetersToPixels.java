@@ -14,6 +14,11 @@ public class MetersToPixels {
 		return i;
 	}
 	
+	/**
+	 * converts pixels to meters
+	 * @param pm pixels to be converted to meters
+	 * @return
+	 */
 	public static double convertMeters(int pm)
 	{
 		double i = (double) (pm/PIXELS_PER_METER);
