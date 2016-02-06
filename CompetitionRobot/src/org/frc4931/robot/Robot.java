@@ -36,20 +36,42 @@ public class Robot extends IterativeRobot {
 	private TalonSRX motor;
 	private FlightStick joystick;
 	private Switch trigger;
+	private boolean ballIn = false;
 	
 	// pitch = forward & backward (inverted), roll = left & right, yaw = twist
 	private ContinuousRange pitch, roll, yaw, throttle;
 	
+	private Switch portcullis, chevalDeFrise, moat, ramparts, drawbridge, sallyPort, rockWall, roughTerrain;
+	
 	@Override
     public void robotInit() {
 		Strongback.configure().recordDataToFile("/home/lvuser/").recordEventsToFile("/home/lvuser/",2097152);
-        motor = Hardware.Motors.talonSRX(KICKER_MOTOR_CAN_ID);
+        
+		motor = Hardware.Motors.talonSRX(KICKER_MOTOR_CAN_ID);
         joystick = Hardware.HumanInterfaceDevices.logitechAttack3D(0);
         trigger = joystick.getTrigger();
         pitch = joystick.getPitch().invert();
         roll = joystick.getRoll();
         yaw = joystick.getYaw();
         throttle = joystick.getThrottle();
+        
+        portcullis    = null;
+        chevalDeFrise = null;
+        moat          = null;
+        ramparts      = null;
+        drawbridge    = null;
+        sallyPort     = null;
+        rockWall      = null;
+        roughTerrain  = null;
+        
+        Strongback.switchReactor(portcullis,new ClearPortcullis(new Portcullis(new Arm()),new DriveSystem(new TankDrive())));
+        Strongback.switchReactor(chevalDeFrise,new ClearChevalDeFrise());
+        Strongback.switchReactor(moat,new ClearMoat());
+        Strongback.switchReactor(ramparts,new ClearRamparts());
+        Strongback.switchReactor(drawbridge,new ClearDrawbridge());
+        Strongback.switchReactor(sallyPort,new ClearSallyPort());
+        Strongback.switchReactor(rockWall,new ClearRockWall());
+        Strongback.switchReactor(roughTerrain,new ClearRoughTerrain());
     }
 
     @Override
@@ -60,6 +82,14 @@ public class Robot extends IterativeRobot {
 
     @Override
     public void teleopPeriodic() {
+    	if(trigger.isTriggered()){
+    		if(ballIn == false)
+    			new Suck(new Roller(new Motor(),new Switch()));
+    		else
+    			new Spit(new Roller(new Motor(),new Switch()));
+    	}
+    	
+    	/**
     	double speed = 0.0;
     	if(Math.abs(pitch.read()) < 0.3)
     		speed = pitch.read();
@@ -70,6 +100,7 @@ public class Robot extends IterativeRobot {
     	double throttleAmount = throttle.read();
     	motor.setSpeed(speed*throttleAmount);
     	System.out.println(speed);
+    	 */
     }
 
     @Override
