@@ -1,48 +1,77 @@
 package Obstacles;
 
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
 import javafx.geometry.Point2D;
 
+/**
+ * {@link BuildObstacles} is used to construct the obstacles for {@link Map}
+ * @author Julian
+ *
+ */
 public class BuildObstacles 
 {
+	//Positions of all Obstacles spots
 	public final static Point2D[] POSITIONS ={new Point2D(225,337),new Point2D(225,271)
 	,new Point2D(225,204),new Point2D(225,137),new Point2D(225,70),new Point2D(519,0)
 	,new Point2D(519,66),new Point2D(519,133),new Point2D(519,133),new Point2D(519,200)
-	,new Point2D(519,267)
-	};
-//	public final static Point2D Point2D1= new Point2D(255,337);
-//	public final static Point2D Point2D2= new Point2D(255,271);
-//	public final static Point2D Point2D3= new Point2D(255,204);
-//	public final static Point2D Point2D4= new Point2D(255,137);
-//	public final static Point2D Point2D5= new Point2D(255,70);
-//	public final static Point2Ds Point2D6= new Point2Ds(519,0);
-//	public final static Point2Ds Point2D7= new Point2Ds(225,66);
-//	public final static Point2Ds Point2D8= new Point2Ds(225,133);
-//	public final static Point2Ds Point2D9= new Point2Ds(225,200);
-//	public final static Point2Ds Point2D10= new Point2Ds(225,267);
+	,new Point2D(519,267)};
+	
 	private Scanner s;
-	private Map<Point2D,Obstacles> m=new HashMap<Point2D,Obstacles>();
-	public BuildObstacles()
+	
+	//map that stores the values
+	private Map<Point2D,Obstacles> mapOfPositions=new HashMap<Point2D,Obstacles>();
+	public BuildObstacles(boolean side)
 	{
-		s=new Scanner(System.in);
-		boolean done=true;
-		int i=1;
-		while(!done)
+		//blue 1-5,red 6-10
+		int i;
+		int sideI;
+		if(side)
 		{
-			m.put(POSITIONS[i],new Obstacles(s.nextInt()));
+			sideI=5;
+			i=1;
 		}
+		else
+		{
+			sideI=10;
+			i=5;
+		}
+			while(i<=sideI)
+			{
+				s=new Scanner(System.in);
+				System.out.println("Please input for Position" +i);
+				Obstacles temp = new Obstacles(s.nextLine().toUpperCase());
+				if(temp.checkIfGood(temp.getObstacle()))
+				{
+					this.putter(i,temp);
+					i++;
+				}
+				else
+				{
+					System.out.println("Invalid input pls try again");
+				}
+			}
 	}
-	public String toString()
+	
+	/**
+	 * putter puts the thing in the map
+	 * @param p int 1-10 for Position
+	 * @param o Obstacle for Position
+	 */
+	public void putter(int p,Obstacles o)
 	{
-		return m.toString();
+		mapOfPositions.put(POSITIONS[p],o);
 	}
-	public static void main(String[] args)
+	
+	/**
+	 * returns the Obstacle at spot
+	 * @param x Position wanted
+	 * @return Obstacle at indicated spot
+	 */
+	public Obstacles getObstacle(int x)
 	{
-		BuildObstacles o=new BuildObstacles();
-		System.out.println(o.toString());
+		return mapOfPositions.get(POSITIONS[x]);
 	}
 }
