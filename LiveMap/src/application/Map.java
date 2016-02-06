@@ -8,11 +8,14 @@ import static application.MetersToPixels.convertPixels;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
+import Obstacles.BuildObstacles;
+
 import static application.MetersToPixels.convertMeters;
 
 public class Map {
 	private RobotConversion robot;
 	private StartPos[] sp = new StartPos[6];
+	private BuildObstacles oB;
 	private Side side;
 	private Rectangle[] startBS = {new Rectangle(1,1,39,39),new Rectangle(7,5,39,39),new Rectangle(4,5,39,39)
 		,new Rectangle(3,2,39,39),new Rectangle(3,6,39,39),new Rectangle(4,7.2,39,39)};
@@ -52,6 +55,7 @@ public class Map {
 			if(side.getSide())
 			{
 				gc.drawImage(imageField,0,0);
+				oB = new BuildObstacles(side.getSide());
 				for(int i=0;i<6;i++)
 				{
 				gc.fillRect(convertPixels(startBS[i].getX()), convertPixels(startBS[i].getY()), startBS[i].getWidth(), startBS[i].getHeight());
