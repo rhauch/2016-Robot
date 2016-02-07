@@ -20,34 +20,42 @@
  * SOFTWARE.
  */
 
-/* Created Sun Jan 10 12:59:55 CST 2016 */
-package org.frc4931.robot;
-
-import edu.wpi.first.wpilibj.IterativeRobot;
-import org.strongback.Strongback;
-
-public class Robot extends IterativeRobot {
-
+package org.frc4931.robot.components;
+/**
+ * Servo interface lays out what a servo is
+ * 
+ * A servo is a motor that can be set to a position
+ * 
+ * @author Julian
+ */
+public interface Servo 
+{
+	/**
+	 * getTargetAngle returns the last angle the servo was
+	 * told to move to
+	 * 
+	 * @return double the last angle the servo was told 
+	 * between {@link #getMinAngle()} and {@link #getMaxAngle()}
+	 */
+	public double getTargetAngle();
 	
-    @Override
-    public void robotInit() 
-    {
-    	
-    }
-
-    @Override
-    public void teleopInit() {
-        // Start Strongback functions ...
-        Strongback.start();
-    }
-
-    @Override
-    public void teleopPeriodic() {
-    }
-
-    @Override
-    public void disabledInit() {
-        // Tell Strongback that the robot is disabled so it can flush and kill commands.
-        Strongback.disable();
-    }
+	/**
+	 * moveToAngle() moves this {@link Servo} to specified angle if larger or 
+	 * smaller clamp it between {@link #getMinAngle()} and {@link #getMaxAngle()}
+	 * 
+	 * @param angle the target angle
+	 */
+	public void moveToAngle(double angle);
+	
+	/**
+	 * getMinAngle() returns the smallest angle possible by this servo
+	 * @return double the minimum angle that can be achieved by this servo
+	 */
+	public double getMinAngle();
+	
+	/**
+	 * getMaxAngle() returns the largest angle possible by this servo
+	 * @return double the maximum angle that can be achieved by this servo
+	 */
+	public double getMaxAngle();
 }
