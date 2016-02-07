@@ -37,11 +37,11 @@ import edu.wpi.first.wpilibj.CameraServer;
  */
 public class Periscope implements Requirable
 {
+	private CameraServer camera;
 	private static final double DEPLOY = 90;
 	private static final double RETRACT=0;
 	private final Servo pitchController;
 	private final Servo yawController;
-	private final CameraServer camera;
 	//TODO figure out how camera works
 	
 	/**
@@ -49,14 +49,14 @@ public class Periscope implements Requirable
 	 * @param pitch {@link Servo} that controls pitch
 	 * @param yaw {@link Servo} that controls yaw
 	 */
-	public Periscope(Servo pitch,Servo yaw,CameraServer c)
+	public Periscope(Servo pitch,Servo yaw)
 	{
-		pitchController=pitch;
-		yawController=yaw;
-		camera=c.getInstance();
+		camera = CameraServer.getInstance();
         camera.setQuality(50);
         //the camera name (ex "cam0") can be found through the roborio web interface
         camera.startAutomaticCapture("cam0");
+		pitchController=pitch;
+		yawController=yaw;
 	}
 	
 	/**

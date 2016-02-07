@@ -29,14 +29,11 @@ import org.strongback.Strongback;
 
 public class Robot extends IterativeRobot {
 
-	CameraServer camera;
+	
     @Override
     public void robotInit() 
     {
-    	camera = CameraServer.getInstance();
-        camera.setQuality(50);
-        //the camera name (ex "cam0") can be found through the roborio web interface
-        camera.startAutomaticCapture("cam0");
+    	
     }
 
     @Override
