@@ -37,7 +37,7 @@ public class Arm implements Requirable
     public static final double MOTOR_SPEED = 1.0;
 
     private final Motor motor;
-    private AngleSensor angleSensor;
+    private final AngleSensor angleSensor;
     private final Switch homeSwitch;
 
     private double zeroAngle;
