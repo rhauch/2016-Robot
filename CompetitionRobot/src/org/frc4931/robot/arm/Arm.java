@@ -40,8 +40,6 @@ public class Arm implements Requirable
     private final AngleSensor angleSensor;
     private final Switch homeSwitch;
 
-    private double zeroAngle;
-
     /**
      * Constructs a new Arm subsystem given a motor, an angle sensor, and a home switch.
      * @param motor The motor to control the arm. Positive speeds should raise the arm; negative should lower it.
@@ -52,8 +50,6 @@ public class Arm implements Requirable
         this.motor = motor;
         this.angleSensor = angleSensor;
         this.homeSwitch = homeSwitch;
-
-        zeroAngle = 0.0;
     }
 
     /**
@@ -91,7 +87,7 @@ public class Arm implements Requirable
      * @return The angle of the arm.
      */
     public double getAngle() {
-        return angleSensor.getAngle() - zeroAngle;
+        return angleSensor.getAngle();
     }
 
     /**
@@ -99,9 +95,7 @@ public class Arm implements Requirable
      * Any subsequent calls to {@link #getAngle()} will be relative to its new zero angle.
      */
     public void zero() {
-        // I prefer using this rather than AngleSensor.zero(). Stack traces can build up for getAngle() for an
-        // angle sensor that is zeroed multiple times, depending upon the implementation.
-        zeroAngle = angleSensor.getAngle();
+        angleSensor.zero();
     }
 
     /**

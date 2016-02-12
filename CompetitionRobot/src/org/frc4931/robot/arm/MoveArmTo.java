@@ -28,6 +28,7 @@ package org.frc4931.robot.arm;
  *
  */
 public class MoveArmTo extends org.strongback.command.Command {
+    
     private final double TOLERANCE = 1.0;// tolerance for angle range
     private final Arm a;
     private final double targetAngle;
