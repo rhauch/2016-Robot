@@ -5,8 +5,6 @@ import javafx.scene.image.Image;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Rotate;
 import static application.MetersToPixels.convertPixels;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 
 import Obstacles.BuildObstacles;
 
@@ -24,7 +22,7 @@ public class Map {
 	private Image imageField = new Image("/application/Field.png",814,400,true,false);
 	private Image imageBA = new Image("/application/BlueDot.png",39,39,true,false);
 	private Image imageRA = new Image("/application/RedDot.png",39,39,true,false);
-	private Image imageSP = new Image("/application/StartingPosition.png",39,39,true,false);
+	//private Image imageSP = new Image("/application/StartingPosition.png",39,39,true,false);
 	private Image imageOb = new Image("/application/ObstacleHighlight.png",28,63,true,false);
 	private Image imageRS = new Image("/application/RedSide.png",407,400,true,false);
 	private Image imageBS = new Image("/application/BlueSide.png",407,400,true,false);
