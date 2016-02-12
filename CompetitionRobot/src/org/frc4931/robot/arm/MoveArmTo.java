@@ -20,43 +20,42 @@
  * SOFTWARE.
  */
 package org.frc4931.robot.arm;
+
 /**
  * This is the command to move the arm to a specified angle
  * 
  * @author Julian Nieto
  *
  */
-public class MoveArmTo extends org.strongback.command.Command
-{
-	private final double TOLERANCE=1.0;//tolerance for angle range
-	private Arm a;
-	private double targetAngle;
-	/**
-	 * 
-	 * @param degrees degrees desired
-	 * @param arm     arm inputed
-	 */
-	public MoveArmTo(double degrees,Arm arm)
-	{
-		targetAngle=degrees;
-		a=arm;
-	}
-	@Override
-	public boolean execute() 
-	{
-		if(a.getAngle()>targetAngle)
-		{
-			a.lower();
-		}
-		else
-		{
-			a.raise();
-		}
-		return Math.abs(a.getAngle()-targetAngle)<=TOLERANCE;
-	}
-	@Override
-	public void end()
-	{
-		a.stop();
-	}
+public class MoveArmTo extends org.strongback.command.Command {
+    
+    private final double TOLERANCE = 1.0;// tolerance for angle range
+    private final Arm a;
+    private final double targetAngle;
+
+    /**
+     * Create a command with the desired target angle.
+     * 
+     * @param degrees degrees desired
+     * @param arm arm inputed
+     */
+    public MoveArmTo(double degrees, Arm arm) {
+        targetAngle = degrees;
+        a = arm;
+    }
+
+    @Override
+    public boolean execute() {
+        if (a.getAngle() > targetAngle) {
+            a.lower();
+        } else {
+            a.raise();
+        }
+        return Math.abs(a.getAngle() - targetAngle) <= TOLERANCE;
+    }
+
+    @Override
+    public void end() {
+        a.stop();
+    }
 }

@@ -22,6 +22,7 @@
 
 package org.frc4931.robot.drive;
 
+import org.strongback.command.Requirable;
 import org.strongback.drive.TankDrive;
 
 /**
@@ -31,7 +32,7 @@ import org.strongback.drive.TankDrive;
  * utilize the arm in the back as well as modules in the front of the robot. The default direction is with the module
  * side in front.
  */
-public class DriveSystem {
+public class DriveSystem implements Requirable {
     private final TankDrive drive;
 
     private boolean directionFlipped;
