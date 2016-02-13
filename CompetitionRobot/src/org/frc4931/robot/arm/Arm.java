@@ -57,7 +57,9 @@ public class Arm implements Requirable
      * @param controller The Talon SRX controller to pull
      */
     public Arm(TalonSRX controller) {
-        this(controller, controller.getEncoderInput(), controller.getReverseLimitSwitch());
+        //FIXME Strongback assigns reverse limit switch to forward?
+        this(controller, controller.getEncoderInput(), controller.getForwardLimitSwitch());
+        controller.enableLimitSwitch(true, true);
     }
 
     /**
