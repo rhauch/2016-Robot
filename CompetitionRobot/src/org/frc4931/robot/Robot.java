@@ -27,8 +27,12 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.frc4931.robot.arm.Arm;
 import org.frc4931.robot.arm.CalibrateArm;
+import org.frc4931.robot.commands.portcullis.ClearPortcullis;
+import org.frc4931.robot.commands.roller.Spit;
+import org.frc4931.robot.commands.roller.Suck;
 import org.frc4931.robot.drive.DriveSystem;
 import org.strongback.Strongback;
+import org.strongback.SwitchReactor;
 import org.strongback.components.Motor;
 import org.strongback.components.Switch;
 import org.strongback.components.TalonSRX;
@@ -48,7 +52,6 @@ public class Robot extends IterativeRobot {
     private static final int ROLLER_MOTOR_CAN_ID = 0;
     private static final int ARM_MOTOR_CAN_ID = 1;
 	private static final int ROLLER_SWITCH_CHANNEL = 0;
-
     private DriveSystem drive;
     private Arm arm;
     private FlightStick joystick;
