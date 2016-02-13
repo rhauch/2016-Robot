@@ -29,7 +29,7 @@ package org.frc4931.robot.arm;
  */
 public class MoveArmTo extends org.strongback.command.Command {
     
-    private final double TOLERANCE = 1.0;// tolerance for angle range
+    private final double DEGREE_TOLERANCE = 5.0;
     private final Arm a;
     private final double targetAngle;
 
@@ -51,7 +51,7 @@ public class MoveArmTo extends org.strongback.command.Command {
         } else {
             a.raise();
         }
-        return Math.abs(a.getAngle() - targetAngle) <= TOLERANCE;
+        return Math.abs(a.getAngle() - targetAngle) <= DEGREE_TOLERANCE;
     }
 
     @Override

@@ -35,12 +35,8 @@ public class CalibrateArm extends Command {
     }
 
     @Override
-    public void initialize() {
-        arm.lower();
-    }
-
-    @Override
     public boolean execute() {
+        arm.lower();
         return arm.isAtHome();
     }
 
