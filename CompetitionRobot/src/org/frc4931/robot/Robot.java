@@ -23,6 +23,7 @@
 /* Created Sun Jan 10 12:59:55 CST 2016 */
 package org.frc4931.robot;
 
+import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.frc4931.robot.arm.Arm;
