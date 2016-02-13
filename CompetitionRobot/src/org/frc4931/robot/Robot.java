@@ -23,17 +23,19 @@
 /* Created Sun Jan 10 12:59:55 CST 2016 */
 package org.frc4931.robot;
 
-import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import org.frc4931.robot.arm.Arm;
+import org.frc4931.robot.arm.CalibrateArm;
 import org.frc4931.robot.drive.DriveSystem;
 import org.strongback.Strongback;
 import org.strongback.components.Motor;
+import org.strongback.components.Switch;
+import org.strongback.components.TalonSRX;
 import org.strongback.components.ui.ContinuousRange;
 import org.strongback.components.ui.FlightStick;
 import org.strongback.drive.TankDrive;
 import org.strongback.hardware.Hardware;
-
-import edu.wpi.first.wpilibj.IterativeRobot;
 
 public class Robot extends IterativeRobot {
 
@@ -43,11 +45,16 @@ public class Robot extends IterativeRobot {
     private static final int LEFT_REAR_MOTOR_PORT = 3;
     private static final int RIGHT_FRONT_MOTOR_PORT = 0;
     private static final int RIGHT_REAR_MOTOR_PORT = 1;
+    private static final int ROLLER_MOTOR_CAN_ID = 0;
+    private static final int ARM_MOTOR_CAN_ID = 1;
 
     private DriveSystem drive;
+    private Arm arm;
     private FlightStick joystick;
     private ContinuousRange driveSpeed;
     private ContinuousRange turnSpeed;
+    private Switch armUp;
+    private Switch armDown;
 
     @Override
     public void robotInit() {
@@ -66,11 +73,19 @@ public class Robot extends IterativeRobot {
         TankDrive tankDrive = new TankDrive(leftMotors, rightMotors);
         drive = new DriveSystem(tankDrive);
 
+        TalonSRX armMotor = Hardware.Motors.talonSRX(ARM_MOTOR_CAN_ID, -1.3806);
+        arm = new Arm(armMotor);
+
+        Motor rollerMotor = Hardware.Motors.talonSRX(ROLLER_MOTOR_CAN_ID);
+        //TODO Add a roller system
+
         // Define the interface components ...
         joystick = Hardware.HumanInterfaceDevices.logitechAttack3D(0);
         ContinuousRange throttle = joystick.getThrottle().map(t -> (1.0 - t) / 2);
         driveSpeed = joystick.getPitch().scale(throttle::read).invert();
         turnSpeed = joystick.getYaw().scale(throttle::read);
+        armUp = joystick.getButton(6);
+        armDown = joystick.getButton(4);
 
         // Register the functions that run when the switches change state ...
         Strongback.switchReactor().onTriggered(joystick.getTrigger(), drive::toggleDirectionFlipped);
@@ -86,8 +101,7 @@ public class Robot extends IterativeRobot {
     @Override
     public void autonomousInit() {
         // Start Strongback functions ...
-        Strongback.start();
-        Strongback.submit(new TimedDriveCommand(drive, 0.1, 0.1, 2.0));
+        Strongback.restart();
     }
 
     @Override
@@ -103,11 +117,25 @@ public class Robot extends IterativeRobot {
     @Override
     public void teleopPeriodic() {
         drive.arcade(driveSpeed.read(), turnSpeed.read());
+        if (armUp.isTriggered() == armDown.isTriggered()) {
+            arm.stop();
+        } else if (armUp.isTriggered()) {
+            arm.raise();
+        } else if (armDown.isTriggered()) {
+            arm.lower();
+        }
+        SmartDashboard.putNumber("Arm Angle", arm.getAngle());
     }
 
     @Override
     public void disabledInit() {
         // Tell Strongback that the robot is disabled so it can flush and kill commands.
         Strongback.disable();
+    }
+
+    @Override
+    public void testInit() {
+        Strongback.restart();
+        Strongback.submit(new CalibrateArm(arm));
     }
 }

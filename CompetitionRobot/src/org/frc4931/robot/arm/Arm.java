@@ -58,6 +58,7 @@ public class Arm implements Requirable
      */
     public Arm(TalonSRX controller) {
         this(controller, controller.getEncoderInput(), controller.getReverseLimitSwitch());
+        controller.enableLimitSwitch(true, true);
     }
 
     /**
