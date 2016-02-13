@@ -73,6 +73,7 @@ public class Robot extends IterativeRobot {
         TankDrive tankDrive = new TankDrive(leftMotors, rightMotors);
         drive = new DriveSystem(tankDrive);
 
+        // Initialize the arm ...
         TalonSRX armMotor = Hardware.Motors.talonSRX(ARM_MOTOR_CAN_ID, -1.3806);
         arm = new Arm(armMotor);
 
