@@ -48,13 +48,13 @@ public class Robot extends IterativeRobot {
     private FlightStick joystick;
     private ContinuousRange driveSpeed;
     private ContinuousRange turnSpeed;
-    private ContinuousRange throttle;
 
     @Override
     public void robotInit() {
         Strongback.configure()
-                  .recordDataToFile(LOG_FILES_DIRECTORY_PATH)
-                  .recordEventsToFile(LOG_FILES_DIRECTORY_PATH, 2097152);
+                  .recordNoData().recordNoEvents().recordNoCommands();
+//                  .recordDataToFile(LOG_FILES_DIRECTORY_PATH)
+//                  .recordEventsToFile(LOG_FILES_DIRECTORY_PATH, 2097152);
 
         // Define the motors and the drive system ...
         Motor leftFrontMotor = Hardware.Motors.talon(LEFT_FRONT_MOTOR_PORT);
@@ -68,44 +68,30 @@ public class Robot extends IterativeRobot {
 
         // Define the interface components ...
         joystick = Hardware.HumanInterfaceDevices.logitechAttack3D(0);
-        throttle = joystick.getThrottle().map(t -> (1.0 - t) / 2);
-        driveSpeed = joystick.getPitch().scale(this::throttle).invert();
-        turnSpeed = joystick.getYaw().scale(this::throttle);
+        ContinuousRange throttle = joystick.getThrottle().map(t -> (1.0 - t) / 2);
+        driveSpeed = joystick.getPitch().scale(throttle::read).invert();
+        turnSpeed = joystick.getYaw().scale(throttle::read);
 
         // Register the functions that run when the switches change state ...
         Strongback.switchReactor().onTriggered(joystick.getTrigger(), drive::toggleDirectionFlipped);
 
         // Set up the data recorder to capture the left & right motor speeds and the sensivity.
         // We have to do this before we start Strongback...
-        Strongback.dataRecorder()
-                  .register("Left motors", leftMotors)
-                  .register("Right motors", rightMotors)
-                  .register("Sensitivity", throttle.scaleAsInt(1000));
-    }
-
-    /**
-     * Function that returns the current throttle in both autonomous and teleop.
-     * 
-     * @return the current throttle
-     */
-    private double throttle() {
-        // We don't want to rely on user input in autonomous mode ...
-        if (DriverStation.getInstance().isAutonomous()) {
-            return 1.0;
-        }
-
-        return throttle.read();
+//        Strongback.dataRecorder()
+//                  .register("Left motors", leftMotors)
+//                  .register("Right motors", rightMotors)
+//                  .register("Sensitivity", throttle.scaleAsInt(1000));
     }
 
     @Override
     public void autonomousInit() {
+        // Start Strongback functions ...
+        Strongback.start();
+        Strongback.submit(new TimedDriveCommand(drive, 0.1, 0.1, 2.0));
     }
 
     @Override
     public void autonomousPeriodic() {
-        // Start Strongback functions ...
-        Strongback.start();
-        Strongback.submit(new TimedDriveCommand(drive, 0.1, 0.1, 2.0));
     }
 
     @Override
