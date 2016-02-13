@@ -47,6 +47,7 @@ public class Robot extends IterativeRobot {
     private static final int RIGHT_REAR_MOTOR_PORT = 1;
     private static final int ROLLER_MOTOR_CAN_ID = 0;
     private static final int ARM_MOTOR_CAN_ID = 1;
+	private static final int ROLLER_SWITCH_CHANNEL = 0;
 
     private DriveSystem drive;
     private Arm arm;
