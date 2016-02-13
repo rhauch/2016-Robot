@@ -23,6 +23,8 @@
 /* Created Sun Jan 10 12:59:55 CST 2016 */
 package org.frc4931.robot;
 
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.frc4931.robot.drive.DriveSystem;
 import org.strongback.Strongback;
 import org.strongback.components.Motor;
@@ -37,10 +39,10 @@ public class Robot extends IterativeRobot {
 
     public static final String LOG_FILES_DIRECTORY_PATH = "/home/lvuser/";
 
-    private static final int LEFT_FRONT_MOTOR_CAN_ID = 0;
-    private static final int LEFT_REAR_MOTOR_CAN_ID = 1;
-    private static final int RIGHT_FRONT_MOTOR_CAN_ID = 2;
-    private static final int RIGHT_REAR_MOTOR_CAN_ID = 3;
+    private static final int LEFT_FRONT_MOTOR_PORT = 2;
+    private static final int LEFT_REAR_MOTOR_PORT = 3;
+    private static final int RIGHT_FRONT_MOTOR_PORT = 0;
+    private static final int RIGHT_REAR_MOTOR_PORT = 1;
 
     private DriveSystem drive;
     private FlightStick joystick;
@@ -55,20 +57,20 @@ public class Robot extends IterativeRobot {
                   .recordEventsToFile(LOG_FILES_DIRECTORY_PATH, 2097152);
 
         // Define the motors and the drive system ...
-        Motor leftFrontMotor = Hardware.Motors.talonSRX(LEFT_FRONT_MOTOR_CAN_ID);
-        Motor leftRearMotor = Hardware.Motors.talonSRX(LEFT_REAR_MOTOR_CAN_ID);
-        Motor rightFrontMotor = Hardware.Motors.talonSRX(RIGHT_FRONT_MOTOR_CAN_ID);
-        Motor rightRearMotor = Hardware.Motors.talonSRX(RIGHT_REAR_MOTOR_CAN_ID);
-        Motor leftMotors = Motor.compose(leftFrontMotor, leftRearMotor);
+        Motor leftFrontMotor = Hardware.Motors.talon(LEFT_FRONT_MOTOR_PORT);
+        Motor leftRearMotor = Hardware.Motors.talon(LEFT_REAR_MOTOR_PORT);
+        Motor rightFrontMotor = Hardware.Motors.talon(RIGHT_FRONT_MOTOR_PORT);
+        Motor rightRearMotor = Hardware.Motors.talon(RIGHT_REAR_MOTOR_PORT);
+        Motor leftMotors = Motor.compose(leftFrontMotor, leftRearMotor).invert();
         Motor rightMotors = Motor.compose(rightFrontMotor, rightRearMotor);
         TankDrive tankDrive = new TankDrive(leftMotors, rightMotors);
         drive = new DriveSystem(tankDrive);
 
         // Define the interface components ...
         joystick = Hardware.HumanInterfaceDevices.logitechAttack3D(0);
-        throttle = joystick.getThrottle().map(t -> (t + 1.0) / 2.0);
-        driveSpeed = joystick.getPitch().scale(this::throttle);
-        turnSpeed = joystick.getRoll().scale(this::throttle).invert();
+        throttle = joystick.getThrottle().map(t -> (1.0 - t) / 2);
+        driveSpeed = joystick.getPitch().scale(this::throttle).invert();
+        turnSpeed = joystick.getYaw().scale(this::throttle);
 
         // Register the functions that run when the switches change state ...
         Strongback.switchReactor().onTriggered(joystick.getTrigger(), drive::toggleDirectionFlipped);
@@ -87,13 +89,16 @@ public class Robot extends IterativeRobot {
      * @return the current throttle
      */
     private double throttle() {
+        // We don't want to rely on user input in autonomous mode ...
+        if (DriverStation.getInstance().isAutonomous()) {
+            return 1.0;
+        }
+
         return throttle.read();
     }
 
     @Override
     public void autonomousInit() {
-        // Set the maximum throttle in autonomous to be 100% ...
-        this.throttle = () -> 1.0;
     }
 
     @Override
@@ -107,9 +112,6 @@ public class Robot extends IterativeRobot {
     public void teleopInit() {
         // Kill anything running, and start it ...
         Strongback.restart();
-
-        // Use the joystick's throttle ...
-        throttle = joystick.getThrottle().map(t -> (t + 1.0) / 2.0);
     }
 
     @Override
