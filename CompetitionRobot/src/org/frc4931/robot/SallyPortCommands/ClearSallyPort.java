@@ -1,8 +1,8 @@
 package org.frc4931.robot.SallyPortCommands;
 
+import org.frc4931.robot.TimedDriveCommand;
 import org.frc4931.robot.arm.Arm;
 import org.frc4931.robot.arm.MoveArmTo;
-import org.frc4931.robot.drive.Drive;
 import org.frc4931.robot.drive.DriveSystem;
 
 public class ClearSallyPort extends org.strongback.command.CommandGroup
@@ -13,6 +13,6 @@ public class ClearSallyPort extends org.strongback.command.CommandGroup
 	public ClearSallyPort(DriveSystem d,Arm a)
 	{
 		//TODO fine tune this
-		sequentially(new MoveArmTo(ANGLE,a),new Drive(d, DRIVE_SPEED, 0, DRIVE_TIME));
+		sequentially(new MoveArmTo(ANGLE,a), new TimedDriveCommand(d, DRIVE_SPEED, 0, DRIVE_TIME));
 	}
 }

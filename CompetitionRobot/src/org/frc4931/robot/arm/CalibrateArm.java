@@ -43,6 +43,7 @@ public class CalibrateArm extends Command {
     @Override
     public void end() {
         arm.stop();
+        pause(1.0);
         arm.zero();
     }
 }
