@@ -1,9 +1,5 @@
 package org.frc4931.robot.arm;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.strongback.command.Command;
@@ -11,6 +7,10 @@ import org.strongback.mock.Mock;
 import org.strongback.mock.MockAngleSensor;
 import org.strongback.mock.MockMotor;
 import org.strongback.mock.MockSwitch;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class MoveToArmTest {
 	private MockMotor t;
@@ -27,7 +27,7 @@ public class MoveToArmTest {
 
 	@Test
 	public void moveUpToZero() {
-		Command mat = new MoveArmTo(0, a);
+		Command mat = new MoveArmTo(a, 0);
 		as.setAngle(-30);
 		assertFalse(mat.execute());
 		assertEquals(1, Math.signum(t.getSpeed()), 0.1);
@@ -42,7 +42,7 @@ public class MoveToArmTest {
 
 	@Test
 	public void moveDownToZero() {
-		Command mat = new MoveArmTo(0, a);
+		Command mat = new MoveArmTo(a, 0);
 		as.setAngle(30);
 		assertFalse(mat.execute());
 		assertEquals(-1, Math.signum(t.getSpeed()), 0.1);
@@ -57,7 +57,7 @@ public class MoveToArmTest {
 
 	@Test
 	public void moveBackAndForth() {
-		Command mat = new MoveArmTo(0, a);
+		Command mat = new MoveArmTo(a, 0);
 		as.setAngle(30);
 		assertFalse(mat.execute());
 		assertEquals(-1, Math.signum(t.getSpeed()), 0.1);

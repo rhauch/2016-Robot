@@ -28,34 +28,35 @@ package org.frc4931.robot.arm;
  *
  */
 public class MoveArmTo extends org.strongback.command.Command {
-    
-    private final double DEGREE_TOLERANCE = 5.0;
-    private final Arm a;
+    private static final double DEGREE_TOLERANCE = 5.0;
+
+    private final Arm arm;
     private final double targetAngle;
 
     /**
      * Create a command with the desired target angle.
-     * 
-     * @param degrees degrees desired
+     *
      * @param arm arm inputed
+     * @param targetAngle degrees desired
      */
-    public MoveArmTo(double degrees, Arm arm) {
-        targetAngle = degrees;
-        a = arm;
+    public MoveArmTo(Arm arm, double targetAngle) {
+        super(arm);
+        this.arm = arm;
+        this.targetAngle = targetAngle;
     }
 
     @Override
     public boolean execute() {
-        if (a.getAngle() > targetAngle) {
-            a.lower();
+        if (arm.getAngle() > targetAngle) {
+            arm.lower();
         } else {
-            a.raise();
+            arm.raise();
         }
-        return Math.abs(a.getAngle() - targetAngle) <= DEGREE_TOLERANCE;
+        return Math.abs(arm.getAngle() - targetAngle) <= DEGREE_TOLERANCE;
     }
 
     @Override
     public void end() {
-        a.stop();
+        arm.stop();
     }
 }

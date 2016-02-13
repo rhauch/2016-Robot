@@ -20,42 +20,46 @@
  * SOFTWARE.
  */
 
-package org.frc4931.robot.components;
-/**
- * Servo interface lays out what a servo is
- * 
- * A servo is a motor that can be set to a position
- * 
- * @author Julian
- */
-public interface Servo {
+package org.frc4931.robot.roller;
 
-	/**
-	 * getTargetAngle returns the last angle the servo was
-	 * told to move to
-	 * 
-	 * @return double the last angle the servo was told 
-	 * between {@link #getMinAngle()} and {@link #getMaxAngle()}
-	 */
-    double getTargetAngle();
+import org.strongback.command.Requirable;
+import org.strongback.components.Motor;
+import org.strongback.components.Switch;
+
+public class Roller implements Requirable {
+	private Motor wheels; // the motor for the wheels that pull a ball in or push one out
+	private Switch ballIn; // a switch inside the robot that indicates if a ball is in
 	
-	/**
-	 * moveToAngle() moves this {@link Servo} to specified angle if larger or 
-	 * smaller clamp it between {@link #getMinAngle()} and {@link #getMaxAngle()}
-	 * 
-	 * @param angle the target angle
-	 */
-    void moveToAngle(double angle);
+	public Roller(Motor wheels, Switch ballIn) {
+		this.wheels = wheels;
+		this.ballIn = ballIn;
+	}
 	
-	/**
-	 * getMinAngle() returns the smallest angle possible by this servo
-	 * @return double the minimum angle that can be achieved by this servo
+	/*
+	 * Pulls a ball in.
 	 */
-    double getMinAngle();
+	public void suck() {
+		wheels.setSpeed(1.0);
+	}
 	
-	/**
-	 * getMaxAngle() returns the largest angle possible by this servo
-	 * @return double the maximum angle that can be achieved by this servo
+	/*
+	 * Pushes a ball out.
 	 */
-    double getMaxAngle();
+	public void spit() {
+		wheels.setSpeed(-1.0);
+	}
+	
+	/*
+	 * Stops the wheels (used after suck() or spit()).
+	 */
+	public void stop(){
+		wheels.stop();
+	}
+	
+	/*
+	 * Checks if a ball is in.
+	 */
+	public boolean ballIn() {
+		return ballIn.isTriggered();
+	}
 }

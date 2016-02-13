@@ -19,8 +19,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.frc4931.robot;
+
+package org.frc4931.robot.periscope;
 import static org.fest.assertions.Assertions.assertThat;
+
+import edu.wpi.first.wpilibj.PIDController;
+import edu.wpi.first.wpilibj.vision.USBCamera;
 import org.frc4931.robot.components.MockServo;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,86 +34,83 @@ import org.junit.Test;
  * @author Julian
  *
  */
-public class TestPersicope 
-{
+public class TestPeriscope {
 	private MockServo pitch;
 	private MockServo yaw;
-	private Periscope p;
+	private Periscope periscope;
 	
 	
 	@Before
-	public void beforeEach()
-	{
+	public void beforeEach() {
 		pitch = new MockServo();
 		yaw   = new MockServo();
-		p     = new Periscope(pitch,yaw);
+		periscope = new Periscope(null, pitch,yaw);
 	}
 	
 	/**
-	 * Tests {@link deploy()}
+	 * Tests {@link Periscope#deploy()}
 	 */
 	@Test
-	public void shouldDeploy()
-	{
-		pitch.moveToAngle(0);
-		assertThat(pitch.getTargetAngle()).isEqualTo(0);
-		p.deploy();
-		assertThat(pitch.getTargetAngle()).isEqualTo(90);
+	public void shouldDeploy() {
+		pitch.moveToAngle(Periscope.MIN_PITCH);
+		assertThat(pitch.getTargetAngle()).isEqualTo(Periscope.MIN_PITCH);
+		periscope.deploy();
+		assertThat(pitch.getTargetAngle()).isEqualTo(Periscope.MAX_PITCH);
 		
 	}
 	
 	/**
-	 * Tests {@link Retract()}
+	 * Tests {@link Periscope#retract()}
 	 */
-	public void shouldRetract()
-	{
-		pitch.moveToAngle(90);
-		assertThat(pitch.getTargetAngle()).isEqualTo(90);
-		p.deploy();
-		assertThat(pitch.getTargetAngle()).isEqualTo(00);
+	@Test
+	public void shouldRetract() {
+		pitch.moveToAngle(Periscope.MAX_PITCH);
+		assertThat(pitch.getTargetAngle()).isEqualTo(Periscope.MAX_PITCH);
+		periscope.retract();
+		assertThat(pitch.getTargetAngle()).isEqualTo(Periscope.MIN_PITCH);
 	}
 	
 	/**
-	 * Tests {@link setPitch()}
+	 * Tests {@link Periscope#setPitch(double)}
 	 */
-	public void shouldHighSetPitch()
-	{
-		pitch.moveToAngle(0);
-		assertThat(pitch.getTargetAngle()).isEqualTo(00);
-		p.setPitch(180);
-		assertThat(pitch.getTargetAngle()).isEqualTo(90);
-	}
-	
-	/**
-	 * Tests {@link setPitch()}
-	 */
-	public void shouldLowSetPitch()
-	{
+	@Test
+	public void shouldHighSetPitch() {
 		pitch.moveToAngle(0);
 		assertThat(pitch.getTargetAngle()).isEqualTo(0);
-		p.setPitch(-180);
+		periscope.setPitch(Periscope.MAX_PITCH + 90);
+		assertThat(pitch.getTargetAngle()).isEqualTo(Periscope.MAX_PITCH);
+	}
+	
+	/**
+	 * Tests {@link Periscope#setPitch(double)}
+	 */
+	@Test
+	public void shouldLowSetPitch() {
+		pitch.moveToAngle(0);
 		assertThat(pitch.getTargetAngle()).isEqualTo(0);
+		periscope.setPitch(Periscope.MIN_PITCH - 90);
+		assertThat(pitch.getTargetAngle()).isEqualTo(Periscope.MIN_PITCH);
 	}
 	
 	/**
-	 * Tests {@link setYaw()}
+	 * Tests {@link Periscope#setYaw(double)}
 	 */
-	public void shouldLowSetYaw()
-	{
+	@Test
+	public void shouldLowSetYaw() {
 		pitch.moveToAngle(0);
 		assertThat(yaw.getTargetAngle()).isEqualTo(0);
-		p.setYaw(-180);
-		assertThat(yaw.getTargetAngle()).isEqualTo(0);
+		periscope.setYaw(Periscope.MIN_YAW - 90);
+		assertThat(yaw.getTargetAngle()).isEqualTo(Periscope.MIN_YAW);
 	}
 	
 	/**
-	 * Tests {@link setYaw()}
+	 * Tests {@link Periscope#setYaw(double)}
 	 */
-	public void shouldHighSetYaw()
-	{
+	@Test
+	public void shouldHighSetYaw() {
 		pitch.moveToAngle(0);
 		assertThat(yaw.getTargetAngle()).isEqualTo(0);
-		p.setYaw(1800);
-		assertThat(yaw.getTargetAngle()).isEqualTo(180);
+		periscope.setYaw(Periscope.MAX_YAW + 90);
+		assertThat(yaw.getTargetAngle()).isEqualTo(Periscope.MAX_YAW);
 	}
 }

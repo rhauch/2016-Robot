@@ -20,42 +20,29 @@
  * SOFTWARE.
  */
 
-package org.frc4931.robot.components;
-/**
- * Servo interface lays out what a servo is
- * 
- * A servo is a motor that can be set to a position
- * 
- * @author Julian
- */
-public interface Servo {
+package org.frc4931.robot.obstacles;
 
-	/**
-	 * getTargetAngle returns the last angle the servo was
-	 * told to move to
-	 * 
-	 * @return double the last angle the servo was told 
-	 * between {@link #getMinAngle()} and {@link #getMaxAngle()}
-	 */
-    double getTargetAngle();
+import org.frc4931.robot.arm.Arm;
+import org.frc4931.robot.arm.MoveArmTo;
+import org.frc4931.robot.drive.DriveSystem;
+import org.frc4931.robot.drive.TimedDrive;
+import org.strongback.command.CommandGroup;
+
+//FIXME Runs in the background stopping the drive train
+public class ClearPortcullis extends CommandGroup {
+	private static final double driveSpeed = 0.0; // in percent throttle
+	private static final double driveTime = 0.0; // in seconds
+    private static final double raisedAngle = 90.0; // in degrees
+	private static final double driveSpeed2 = 0.0; // in percent throttle
+	private static final double driveTime2 = 0.0; // in seconds
+    private static final double loweredAngle = 0.0; //in degrees
 	
-	/**
-	 * moveToAngle() moves this {@link Servo} to specified angle if larger or 
-	 * smaller clamp it between {@link #getMinAngle()} and {@link #getMaxAngle()}
-	 * 
-	 * @param angle the target angle
-	 */
-    void moveToAngle(double angle);
-	
-	/**
-	 * getMinAngle() returns the smallest angle possible by this servo
-	 * @return double the minimum angle that can be achieved by this servo
-	 */
-    double getMinAngle();
-	
-	/**
-	 * getMaxAngle() returns the largest angle possible by this servo
-	 * @return double the maximum angle that can be achieved by this servo
-	 */
-    double getMaxAngle();
+	public ClearPortcullis(Arm arm, DriveSystem driveSystem) {
+		sequentially(
+                new TimedDrive(driveSystem,driveSpeed,0.0,driveTime),
+                new MoveArmTo(arm, raisedAngle),
+				new TimedDrive(driveSystem,driveSpeed2,0.0,driveTime2),
+                new MoveArmTo(arm, loweredAngle)
+        );
+	}
 }

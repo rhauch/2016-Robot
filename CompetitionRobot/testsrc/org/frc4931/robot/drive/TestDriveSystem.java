@@ -28,7 +28,7 @@ import org.strongback.drive.TankDrive;
 import org.strongback.mock.Mock;
 import org.strongback.mock.MockMotor;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class TestDriveSystem {
     private MockMotor leftMotor;

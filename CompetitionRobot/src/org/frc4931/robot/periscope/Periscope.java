@@ -20,8 +20,10 @@
  * SOFTWARE.
  */
 
-package org.frc4931.robot;
+package org.frc4931.robot.periscope;
 
+import edu.wpi.first.wpilibj.vision.USBCamera;
+import javafx.scene.Camera;
 import  org.frc4931.robot.components.Servo;
 import org.strongback.command.Requirable;
 
@@ -35,44 +37,45 @@ import edu.wpi.first.wpilibj.CameraServer;
  *
  *
  */
-public class Periscope implements Requirable
-{
-	private CameraServer camera;
-	private static final double DEPLOY = 90;
-	private static final double RETRACT=0;
+public class Periscope implements Requirable {
+    public static final double MIN_PITCH = 0;
+    public static final double MAX_PITCH = 90;
+    public static final double MIN_YAW = 0;
+    public static final double MAX_YAW = 180;
+
+	private final USBCamera camera;
 	private final Servo pitchController;
 	private final Servo yawController;
-	//TODO figure out how camera works
 	
 	/**
 	 * creates periscope with 2 {@link Servo}s
-	 * @param pitch {@link Servo} that controls pitch
-	 * @param yaw {@link Servo} that controls yaw
+     * @param camera The camera that is to be controlled
+	 * @param pitchController {@link Servo} that controls pitch
+	 * @param yawController {@link Servo} that controls yaw
 	 */
-	public Periscope(Servo pitch,Servo yaw)
-	{
-		camera = CameraServer.getInstance();
-        camera.setQuality(50);
-        //the camera name (ex "cam0") can be found through the roborio web interface
-        camera.startAutomaticCapture("cam0");
-		pitchController=pitch;
-		yawController=yaw;
+	public Periscope(USBCamera camera, Servo pitchController, Servo yawController) {
+        this.camera = camera;
+        this.pitchController = pitchController;
+        this.yawController = yawController;
+
+        if (camera != null) {
+            CameraServer.getInstance().setQuality(50);
+            CameraServer.getInstance().startAutomaticCapture(camera);
+        }
 	}
 	
 	/**
-	 *deploy() turns {@link Servo} to lift camera arm
+	 * Sets the pitch to the highest possible angle.
 	 */
-	public void deploy()
-	{
-		pitchController.moveToAngle(DEPLOY);
+	public void deploy() {
+		pitchController.moveToAngle(MAX_PITCH);
 	}
 	
 	/**
-	 * retract() turns {@link Servo} to lower camera arm
+	 * Sets the pitch to the lowest possible angle.
 	 */
-	public void retract()
-	{
-		pitchController.moveToAngle(RETRACT);
+	public void retract() {
+		pitchController.moveToAngle(MIN_PITCH);
 	}
 	
 	/**
@@ -80,8 +83,7 @@ public class Periscope implements Requirable
 	 * 0(being parallel to the floor) and 90 degrees
 	 * @return double the target angle
 	 */
-	public double getPitch()
-	{
+	public double getPitch() {
 		return pitchController.getTargetAngle();
 	}
 	
@@ -91,22 +93,17 @@ public class Periscope implements Requirable
 	* 
 	* @param angle the inputed angles 
 	*/
-	public void setPitch(double angle)
-	{
-		if(angle>90)
-			angle=90;
-		else if(angle<0)
-			angle=0; 
-		pitchController.moveToAngle(angle);			
+	public void setPitch(double angle) {
+        angle = Math.max(MIN_PITCH, Math.min(angle, MAX_PITCH));
+		pitchController.moveToAngle(angle);
 	}
-	
+
 	/**
 	 * returns current yaw angle between 0(being parallel to the floor)-180 degrees
 	 *  (90 being the middle which is facing forward
 	 * @return double the target angle
 	 */
-	public double getYaw()
-	{
+	public double getYaw() {
 		return yawController.getTargetAngle();
 	}
 	
@@ -116,12 +113,8 @@ public class Periscope implements Requirable
 	 * 
 	 * @param angle the angle inputed
 	 */
-	public void setYaw(double angle)
-	{
-		if(angle>180)
-			angle=180.0;
-		if(angle<0)
-			angle=0.0;
+	public void setYaw(double angle) {
+        angle = Math.max(MIN_YAW, Math.min(angle, MAX_YAW));
 		yawController.moveToAngle(angle);
 	}
 }

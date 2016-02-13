@@ -20,42 +20,35 @@
  * SOFTWARE.
  */
 
-package org.frc4931.robot.components;
-/**
- * Servo interface lays out what a servo is
- * 
- * A servo is a motor that can be set to a position
- * 
- * @author Julian
- */
-public interface Servo {
+package org.frc4931.robot.periscope;
+import static org.fest.assertions.Assertions.assertThat;
 
-	/**
-	 * getTargetAngle returns the last angle the servo was
-	 * told to move to
-	 * 
-	 * @return double the last angle the servo was told 
-	 * between {@link #getMinAngle()} and {@link #getMaxAngle()}
-	 */
-    double getTargetAngle();
+import org.frc4931.robot.components.MockServo;
+import org.junit.Before;
+import org.junit.Test;
+
+public class SetPitchCommandTest {
+	private MockServo pitch;
+	private MockServo yaw;
+	private Periscope periscope;
+	private SetPitchCommand command;
+	private double angle;
 	
-	/**
-	 * moveToAngle() moves this {@link Servo} to specified angle if larger or 
-	 * smaller clamp it between {@link #getMinAngle()} and {@link #getMaxAngle()}
-	 * 
-	 * @param angle the target angle
-	 */
-    void moveToAngle(double angle);
+	@Before
+	public void beforeEach() {
+		angle  = 90;
+		pitch = new MockServo();
+		yaw = new MockServo();
+		periscope = new Periscope(null, pitch, yaw);
+		command = new SetPitchCommand(periscope, angle);
+	}
 	
-	/**
-	 * getMinAngle() returns the smallest angle possible by this servo
-	 * @return double the minimum angle that can be achieved by this servo
-	 */
-    double getMinAngle();
-	
-	/**
-	 * getMaxAngle() returns the largest angle possible by this servo
-	 * @return double the maximum angle that can be achieved by this servo
-	 */
-    double getMaxAngle();
+	@Test
+	public void shouldSetPitchCommand() {
+		pitch.moveToAngle(0);
+		assertThat(pitch.getTargetAngle()).isEqualTo(0);
+		command.execute();
+		assertThat(pitch.getTargetAngle()).isEqualTo(angle);
+	}
 }
+
