@@ -27,8 +27,12 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.frc4931.robot.arm.Arm;
 import org.frc4931.robot.arm.CalibrateArm;
+import org.frc4931.robot.commands.portcullis.ClearPortcullis;
+import org.frc4931.robot.commands.roller.Spit;
+import org.frc4931.robot.commands.roller.Suck;
 import org.frc4931.robot.drive.DriveSystem;
 import org.strongback.Strongback;
+import org.strongback.SwitchReactor;
 import org.strongback.components.Motor;
 import org.strongback.components.Switch;
 import org.strongback.components.TalonSRX;
@@ -47,7 +51,7 @@ public class Robot extends IterativeRobot {
     private static final int RIGHT_REAR_MOTOR_PORT = 1;
     private static final int ROLLER_MOTOR_CAN_ID = 0;
     private static final int ARM_MOTOR_CAN_ID = 1;
-
+	private static final int ROLLER_SWITCH_CHANNEL = 0;
     private DriveSystem drive;
     private Arm arm;
     private FlightStick joystick;
@@ -55,6 +59,7 @@ public class Robot extends IterativeRobot {
     private ContinuousRange turnSpeed;
     private Switch armUp;
     private Switch armDown;
+	private Switch rollerSwitch, suck1, spit1, portcullis1, portcullis2;
 
     @Override
     public void robotInit() {
@@ -87,9 +92,20 @@ public class Robot extends IterativeRobot {
         turnSpeed = joystick.getYaw().scale(throttle::read);
         armUp = joystick.getButton(6);
         armDown = joystick.getButton(4);
+		rollerSwitch = Hardware.Switches.normallyOpen(ROLLER_SWITCH_CHANNEL);
+		suck1        = joystick.getButton(3);
+        spit1        = joystick.getButton(5);
+		portcullis1  = joystick.getButton(7);
+        portcullis2  = joystick.getButton(11);
+		SwitchReactor reactor = Strongback.switchReactor();
 
         // Register the functions that run when the switches change state ...
-        Strongback.switchReactor().onTriggered(joystick.getTrigger(), drive::toggleDirectionFlipped);
+        reactor.onTriggered(joystick.getTrigger(), drive::toggleDirectionFlipped);
+		
+		reactor.onTriggered(suck1,()->Strongback.submit(new Suck(new Roller(rollerMotor,rollerSwitch))));
+        reactor.onTriggered(spit1,()->Strongback.submit(new Spit(new Roller(rollerMotor,rollerSwitch))));
+		reactor.onTriggered(portcullis1,()->Strongback.submit(new ClearPortcullis(new Portcullis(new Arm(armMotor)),new DriveSystem(tankDrive))));
+        reactor.onTriggered(portcullis2,()->Strongback.submit(new ClearPortcullis(new Portcullis(new Arm(armMotor)),new DriveSystem(tankDrive))));
 
         // Set up the data recorder to capture the left & right motor speeds and the sensivity.
         // We have to do this before we start Strongback...
