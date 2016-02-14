@@ -3,7 +3,7 @@ package org.frc4931.robot.roller;
 import org.strongback.command.Command;
 
 public class Suck extends Command {
-	private Roller roller;
+	private final Roller roller;
 	
 	public Suck(Roller roller) {
         super(roller);
