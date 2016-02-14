@@ -20,42 +20,24 @@
  * SOFTWARE.
  */
 
-package org.frc4931.robot.components;
-/**
- * Servo interface lays out what a servo is
- * 
- * A servo is a motor that can be set to a position
- * 
- * @author Julian
- */
-public interface Servo {
+package org.frc4931.robot.obstacles;
 
-	/**
-	 * getTargetAngle returns the last angle the servo was
-	 * told to move to
-	 * 
-	 * @return double the last angle the servo was told 
-	 * between {@link #getMinAngle()} and {@link #getMaxAngle()}
-	 */
-    double getTargetAngle();
-	
-	/**
-	 * moveToAngle() moves this {@link Servo} to specified angle if larger or 
-	 * smaller clamp it between {@link #getMinAngle()} and {@link #getMaxAngle()}
-	 * 
-	 * @param angle the target angle
-	 */
-    void moveToAngle(double angle);
-	
-	/**
-	 * getMinAngle() returns the smallest angle possible by this servo
-	 * @return double the minimum angle that can be achieved by this servo
-	 */
-    double getMinAngle();
-	
-	/**
-	 * getMaxAngle() returns the largest angle possible by this servo
-	 * @return double the maximum angle that can be achieved by this servo
-	 */
-    double getMaxAngle();
+import org.frc4931.robot.arm.Arm;
+import org.frc4931.robot.arm.MoveArmTo;
+import org.frc4931.robot.drive.DriveSystem;
+import org.frc4931.robot.drive.TimedDrive;
+import org.strongback.command.CommandGroup;
+
+//TODO Test and fix
+public class ClearSallyPort extends CommandGroup {
+	private static final double ANGLE = 0.0;
+	private static final double DRIVE_SPEED = -20;
+	private static final double DRIVE_TIME = 2;
+
+	public ClearSallyPort(DriveSystem drive, Arm arm) {
+		sequentially(
+                new MoveArmTo(arm, ANGLE),
+                new TimedDrive(drive, DRIVE_SPEED, 0, DRIVE_TIME)
+        );
+	}
 }

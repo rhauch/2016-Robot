@@ -23,15 +23,14 @@
 /* Created Sun Jan 10 12:59:55 CST 2016 */
 package org.frc4931.robot;
 
-import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.frc4931.robot.arm.Arm;
 import org.frc4931.robot.arm.CalibrateArm;
-import org.frc4931.robot.commands.portcullis.ClearPortcullis;
-import org.frc4931.robot.commands.roller.Spit;
-import org.frc4931.robot.commands.roller.Suck;
 import org.frc4931.robot.drive.DriveSystem;
+import org.frc4931.robot.roller.Roller;
+import org.frc4931.robot.roller.Spit;
+import org.frc4931.robot.roller.Suck;
 import org.strongback.Strongback;
 import org.strongback.SwitchReactor;
 import org.strongback.components.Motor;
@@ -52,15 +51,15 @@ public class Robot extends IterativeRobot {
     private static final int RIGHT_REAR_MOTOR_PORT = 1;
     private static final int ROLLER_MOTOR_CAN_ID = 0;
     private static final int ARM_MOTOR_CAN_ID = 1;
+    private static final double ARM_PULSES_PER_DEGREE = 7.0 * 71.0 / 360.0;
 	private static final int ROLLER_SWITCH_CHANNEL = 0;
     private DriveSystem drive;
     private Arm arm;
-    private FlightStick joystick;
+    private Roller roller;
     private ContinuousRange driveSpeed;
     private ContinuousRange turnSpeed;
     private Switch armUp;
     private Switch armDown;
-	private Switch rollerSwitch, suck1, spit1, portcullis1, portcullis2;
 
     @Override
     public void robotInit() {
@@ -79,34 +78,30 @@ public class Robot extends IterativeRobot {
         TankDrive tankDrive = new TankDrive(leftMotors, rightMotors);
         drive = new DriveSystem(tankDrive);
 
-        // Initialize the arm ...
-        TalonSRX armMotor = Hardware.Motors.talonSRX(ARM_MOTOR_CAN_ID, -1.3806);
+        // Initialize the subsystems ...
+        TalonSRX armMotor = Hardware.Motors.talonSRX(ARM_MOTOR_CAN_ID, ARM_PULSES_PER_DEGREE);
         arm = new Arm(armMotor);
 
         Motor rollerMotor = Hardware.Motors.talonSRX(ROLLER_MOTOR_CAN_ID);
-        //TODO Add a roller system
+        Switch rollerSwitch = Hardware.Switches.normallyOpen(ROLLER_SWITCH_CHANNEL);
+        roller = new Roller(rollerMotor, rollerSwitch);
 
         // Define the interface components ...
-        joystick = Hardware.HumanInterfaceDevices.logitechAttack3D(0);
+        FlightStick joystick = Hardware.HumanInterfaceDevices.logitechAttack3D(0);
         ContinuousRange throttle = joystick.getThrottle().map(t -> (1.0 - t) / 2);
         driveSpeed = joystick.getPitch().scale(throttle::read).invert();
         turnSpeed = joystick.getYaw().scale(throttle::read);
         armUp = joystick.getButton(6);
         armDown = joystick.getButton(4);
-		rollerSwitch = Hardware.Switches.normallyOpen(ROLLER_SWITCH_CHANNEL);
-		suck1        = joystick.getButton(3);
-        spit1        = joystick.getButton(5);
-		portcullis1  = joystick.getButton(7);
-        portcullis2  = joystick.getButton(11);
-		SwitchReactor reactor = Strongback.switchReactor();
+		Switch suck = joystick.getButton(3);
+        Switch spit = joystick.getButton(5);
 
         // Register the functions that run when the switches change state ...
+        SwitchReactor reactor = Strongback.switchReactor();
+
         reactor.onTriggered(joystick.getTrigger(), drive::toggleDirectionFlipped);
-		
-		reactor.onTriggered(suck1,()->Strongback.submit(new Suck(new Roller(rollerMotor,rollerSwitch))));
-        reactor.onTriggered(spit1,()->Strongback.submit(new Spit(new Roller(rollerMotor,rollerSwitch))));
-		reactor.onTriggered(portcullis1,()->Strongback.submit(new ClearPortcullis(new Portcullis(new Arm(armMotor)),new DriveSystem(tankDrive))));
-        reactor.onTriggered(portcullis2,()->Strongback.submit(new ClearPortcullis(new Portcullis(new Arm(armMotor)),new DriveSystem(tankDrive))));
+		reactor.onTriggered(suck, ()->Strongback.submit(new Suck(roller)));
+        reactor.onTriggered(spit, ()->Strongback.submit(new Spit(roller)));
 
         // Set up the data recorder to capture the left & right motor speeds and the sensivity.
         // We have to do this before we start Strongback...

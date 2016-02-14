@@ -32,8 +32,7 @@ import org.strongback.components.TalonSRX;
  * The Arm is a subsystem of the robot that can be used to raise and lower to specific angles.
  * It is used to traverse tall defenses and open gates.
  */
-public class Arm implements Requirable
-{
+public class Arm implements Requirable {
     public static final double MOTOR_SPEED = 1.0;
 
     private final Motor motor;

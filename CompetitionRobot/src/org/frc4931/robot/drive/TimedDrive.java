@@ -19,32 +19,47 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
-package org.frc4931.robot.arm;
+package org.frc4931.robot.drive;
 
 import org.strongback.command.Command;
 
 /**
- * Lowers the arm until the home switch is triggered. After that, the arm is zeroed.`
+ * The command that drives the robot at a constant forward and turn speed for a specific duration.
  */
-public class CalibrateArm extends Command {
-    private final Arm arm;
+public class TimedDrive extends Command {
 
-    public CalibrateArm(Arm arm) {
-        super(arm);
-        this.arm = arm;
+    private final DriveSystem drive;
+    private final double driveSpeed;
+    private final double turnSpeed;
+    
+    /**
+     * Create a new autonomous command.
+     * @param drive the chassis
+     * @param driveSpeed the speed at which to drive forward; should be [-1.0, 1.0]
+     * @param turnSpeed the speed at which to turn; should be [-1.0, 1.0]
+     * @param duration the duration of this command; should be positive
+     */
+    public TimedDrive(DriveSystem drive, double driveSpeed, double turnSpeed, double duration) {
+        super(duration, drive);
+        this.drive = drive;
+        this.driveSpeed = driveSpeed;
+        this.turnSpeed = turnSpeed;
     }
-
+    
     @Override
     public boolean execute() {
-        arm.lower();
-        return arm.isAtHome();
+        drive.arcade(driveSpeed, turnSpeed);
+        return false;   // not complete; it will time out automatically
     }
-
+    
+    @Override
+    public void interrupted() {
+        drive.stop();
+    }
+    
     @Override
     public void end() {
-        arm.stop();
-        pause(1.0);
-        arm.zero();
+        drive.stop();
     }
+
 }
