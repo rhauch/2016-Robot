@@ -30,19 +30,19 @@ import org.strongback.command.CommandGroup;
 
 //FIXME Runs in the background stopping the drive train
 public class ClearPortcullis extends CommandGroup {
-	private static final double driveSpeed = 0.0; // in percent throttle
-	private static final double driveTime = 0.0; // in seconds
-    private static final double raisedAngle = 90.0; // in degrees
-	private static final double driveSpeed2 = 0.0; // in percent throttle
-	private static final double driveTime2 = 0.0; // in seconds
-    private static final double loweredAngle = 0.0; //in degrees
+	private static final double DRIVE_SPEED = 0.0; // in percent throttle
+	private static final double DRIVE_TIME = 0.0; // in seconds
+    private static final double RAISED_ANGLE = 90.0; // in degrees
+	private static final double DRIVE_SPEED_2 = 0.0; // in percent throttle
+	private static final double DRIVE_TIME_2 = 0.0; // in seconds
+    private static final double LOWERED_ANGLE = 0.0; //in degrees
 	
 	public ClearPortcullis(Arm arm, DriveSystem driveSystem) {
 		sequentially(
-                new TimedDrive(driveSystem,driveSpeed,0.0,driveTime),
-                new MoveArmTo(arm, raisedAngle),
-				new TimedDrive(driveSystem,driveSpeed2,0.0,driveTime2),
-                new MoveArmTo(arm, loweredAngle)
+                new TimedDrive(driveSystem, DRIVE_SPEED,0.0, DRIVE_TIME),
+                new MoveArmTo(arm, RAISED_ANGLE),
+				new TimedDrive(driveSystem, DRIVE_SPEED_2,0.0, DRIVE_TIME_2),
+                new MoveArmTo(arm, LOWERED_ANGLE)
         );
 	}
 }

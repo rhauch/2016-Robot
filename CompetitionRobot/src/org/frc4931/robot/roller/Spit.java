@@ -5,7 +5,7 @@ import org.strongback.command.Command;
 public class Spit extends Command {
     private static final double SPIT_DURATION = 2.0; // in seconds
 
-	private Roller roller;
+	private final Roller roller;
 	
 	public Spit(Roller roller) {
         super(SPIT_DURATION, roller);

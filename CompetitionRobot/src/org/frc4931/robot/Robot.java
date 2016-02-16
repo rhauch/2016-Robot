@@ -23,8 +23,10 @@
 /* Created Sun Jan 10 12:59:55 CST 2016 */
 package org.frc4931.robot;
 
+import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.vision.USBCamera;
 import org.frc4931.robot.arm.Arm;
 import org.frc4931.robot.arm.CalibrateArm;
 import org.frc4931.robot.drive.DriveSystem;
@@ -43,8 +45,7 @@ import org.strongback.hardware.Hardware;
 
 public class Robot extends IterativeRobot {
 
-    public static final String LOG_FILES_DIRECTORY_PATH = "/home/lvuser/";
-
+    private static final String LOG_FILES_DIRECTORY_PATH = "/home/lvuser/";
     private static final int LEFT_FRONT_MOTOR_PORT = 2;
     private static final int LEFT_REAR_MOTOR_PORT = 3;
     private static final int RIGHT_FRONT_MOTOR_PORT = 0;
@@ -53,6 +54,7 @@ public class Robot extends IterativeRobot {
     private static final int ARM_MOTOR_CAN_ID = 1;
     private static final double ARM_PULSES_PER_DEGREE = 7.0 * 71.0 / 360.0;
 	private static final int ROLLER_SWITCH_CHANNEL = 0;
+
     private DriveSystem drive;
     private Arm arm;
     private Roller roller;
@@ -85,6 +87,9 @@ public class Robot extends IterativeRobot {
         Motor rollerMotor = Hardware.Motors.talonSRX(ROLLER_MOTOR_CAN_ID);
         Switch rollerSwitch = Hardware.Switches.normallyOpen(ROLLER_SWITCH_CHANNEL);
         roller = new Roller(rollerMotor, rollerSwitch);
+
+//        CameraServer.getInstance().setQuality(50);
+//        CameraServer.getInstance().startAutomaticCapture(new USBCamera());
 
         // Define the interface components ...
         FlightStick joystick = Hardware.HumanInterfaceDevices.logitechAttack3D(0);

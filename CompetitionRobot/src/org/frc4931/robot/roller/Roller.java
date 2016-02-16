@@ -27,8 +27,8 @@ import org.strongback.components.Motor;
 import org.strongback.components.Switch;
 
 public class Roller implements Requirable {
-	private Motor wheels; // the motor for the wheels that pull a ball in or push one out
-	private Switch ballIn; // a switch inside the robot that indicates if a ball is in
+	private final Motor wheels;
+	private final Switch ballIn;
 	
 	public Roller(Motor wheels, Switch ballIn) {
 		this.wheels = wheels;
