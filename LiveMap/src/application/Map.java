@@ -23,7 +23,7 @@ public class Map {
 	private Image imageBA = new Image("/application/BlueDot.png",39,39,true,false);
 	private Image imageRA = new Image("/application/RedDot.png",39,39,true,false);
 	//private Image imageSP = new Image("/application/StartingPosition.png",39,39,true,false);
-	private Image imageOb = new Image("/application/ObstacleHighlight.png",28,63,true,false);
+	private Image imageObg = new Image("/application/ObstacleGreenHighlight.png",28,63,true,false);
 	private Image imageRS = new Image("/application/RedSide.png",407,400,true,false);
 	private Image imageBS = new Image("/application/BlueSide.png",407,400,true,false);
 	private double sx = 0;
@@ -46,7 +46,7 @@ public class Map {
 			else
 			gc.drawImage(imageRA, xCord, yCord, 39, 39);
 			gc.restore();
-			gc.drawImage(imageOb, 255, 337, 28, 63);
+			gc.drawImage(imageObg, 255, 337, 28, 63);
 		}
 		else if (flag == false && flag2 == true)
 		{
