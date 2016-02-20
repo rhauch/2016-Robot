@@ -29,7 +29,7 @@ public class BuildObstacles
 		int boundary;
 		if(isBlue)
 		{
-			boundary=5;
+			boundary=4;
 			i=0;
 		}
 		else
