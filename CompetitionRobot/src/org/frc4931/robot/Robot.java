@@ -79,8 +79,8 @@ public class Robot extends IterativeRobot {
         Motor leftRearMotor = Hardware.Motors.talon(LEFT_REAR_MOTOR_PORT);
         Motor rightFrontMotor = Hardware.Motors.talon(RIGHT_FRONT_MOTOR_PORT);
         Motor rightRearMotor = Hardware.Motors.talon(RIGHT_REAR_MOTOR_PORT);
-        Motor leftMotors = Motor.compose(leftFrontMotor, leftRearMotor).invert();
-        Motor rightMotors = Motor.compose(rightFrontMotor, rightRearMotor);
+        Motor leftMotors = Motor.compose(leftFrontMotor, leftRearMotor);
+        Motor rightMotors = Motor.compose(rightFrontMotor, rightRearMotor).invert();
         TankDrive tankDrive = new TankDrive(leftMotors, rightMotors);
         drive = new DriveSystem(tankDrive);
         // Initialize the subsystems ...
