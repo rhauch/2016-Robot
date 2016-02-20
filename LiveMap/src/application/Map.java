@@ -49,7 +49,7 @@ public class Map {
 			else
 			gc.drawImage(imageRA, xCord, yCord, 39, 39);
 			gc.restore();
-			gc.drawImage(imageOb, 255, 337, 28, 63);
+			gc.drawImage(imageObg, 255, 337, 28, 63);
 		}
 		else if (flag == false && flag2 == true)
 		{
