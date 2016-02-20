@@ -91,9 +91,6 @@ public class Robot extends IterativeRobot {
         Switch rollerSwitch = Hardware.Switches.normallyOpen(ROLLER_SWITCH_CHANNEL);
         roller = new Roller(rollerMotor, rollerSwitch);
 
-//        CameraServer.getInstance().setQuality(50);
-//        CameraServer.getInstance().startAutomaticCapture(new USBCamera());
-
         // Define the interface components ...
         FlightStick joystick = Hardware.HumanInterfaceDevices.logitechAttack3D(0);
         ContinuousRange throttle = joystick.getThrottle().map(t -> (1.0 - t) / 2);
