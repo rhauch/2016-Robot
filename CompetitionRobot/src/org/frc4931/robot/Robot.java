@@ -24,14 +24,11 @@
 package org.frc4931.robot;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.frc4931.robot.arm.Arm;
 import org.frc4931.robot.arm.CalibrateArm;
 import org.frc4931.robot.drive.DriveSystem;
 import org.frc4931.robot.drive.TimedDrive;
 import org.frc4931.robot.roller.Roller;
-import org.frc4931.robot.roller.Spit;
-import org.frc4931.robot.roller.Suck;
 import org.strongback.Strongback;
 import org.strongback.SwitchReactor;
 import org.strongback.components.Motor;
@@ -52,7 +49,6 @@ public class Robot extends IterativeRobot {
     private static final int ROLLER_MOTOR_CAN_ID = 0;
     private static final int ARM_MOTOR_CAN_ID = 1;
     private static final double ARM_PULSES_PER_DEGREE = 7.0 * 71.0 / 360.0;
-	private static final int ROLLER_SWITCH_CHANNEL = 0;
 
     private DriveSystem drive;
     private Arm arm;
@@ -61,6 +57,8 @@ public class Robot extends IterativeRobot {
     private ContinuousRange turnSpeed;
     private Switch armUp;
     private Switch armDown;
+    private Switch rollerIn;
+    private Switch rollerOut;
 
     public static final double AUTO_DRIVE_SPEED=1;
     public static final double AUTO_DRIVE_TIME=2;
@@ -86,6 +84,9 @@ public class Robot extends IterativeRobot {
         TalonSRX armMotor = Hardware.Motors.talonSRX(ARM_MOTOR_CAN_ID, ARM_PULSES_PER_DEGREE);
         arm = new Arm(armMotor);
 
+        Motor rollerMotor = Hardware.Motors.talonSRX(ROLLER_MOTOR_CAN_ID);
+        roller = new Roller(rollerMotor);
+
         // Define the interface components ...
         FlightStick joystick = Hardware.HumanInterfaceDevices.logitechAttack3D(0);
         ContinuousRange throttle = joystick.getThrottle().map(t -> (1.0 - t) / 2);
@@ -93,20 +94,13 @@ public class Robot extends IterativeRobot {
         turnSpeed = joystick.getYaw().scale(throttle::read);
         armUp = joystick.getButton(6);
         armDown = joystick.getButton(4);
-		Switch suck = joystick.getButton(3);
-        Switch spit = joystick.getButton(5);
-
-        Motor rollerMotor = Hardware.Motors.talonSRX(ROLLER_MOTOR_CAN_ID).invert();
-//        Switch rollerSwitch = Hardware.Switches.normallyOpen(ROLLER_SWITCH_CHANNEL);
-        Switch rollerSwitch = joystick.getThumb();
-        roller = new Roller(rollerMotor, rollerSwitch);
+		rollerIn = joystick.getButton(3);
+        rollerOut = joystick.getButton(5);
 
         // Register the functions that run when the switches change state ...
         SwitchReactor reactor = Strongback.switchReactor();
 
         reactor.onTriggered(joystick.getTrigger(), drive::toggleDirectionFlipped);
-		reactor.onTriggered(suck, ()->Strongback.submit(new Suck(roller)));
-        reactor.onTriggered(spit, ()->Strongback.submit(new Spit(roller)));
 
         // Set up the data recorder to capture the left & right motor speeds and the sensivity.
         // We have to do this before we start Strongback...
@@ -136,6 +130,7 @@ public class Robot extends IterativeRobot {
     @Override
     public void teleopPeriodic() {
         drive.arcade(driveSpeed.read(), turnSpeed.read());
+
         if (armUp.isTriggered() == armDown.isTriggered()) {
             arm.stop();
         } else if (armUp.isTriggered()) {
@@ -143,7 +138,14 @@ public class Robot extends IterativeRobot {
         } else if (armDown.isTriggered()) {
             arm.lower();
         }
-        SmartDashboard.putNumber("Arm Angle", arm.getAngle());
+
+        if (rollerIn.isTriggered() == rollerOut.isTriggered()) {
+            roller.stop();
+        } else if (rollerIn.isTriggered()) {
+            roller.suck();
+        } else if (rollerOut.isTriggered()) {
+            roller.spit();
+        }
     }
 
     @Override

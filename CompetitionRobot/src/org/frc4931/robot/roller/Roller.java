@@ -24,29 +24,28 @@ package org.frc4931.robot.roller;
 
 import org.strongback.command.Requirable;
 import org.strongback.components.Motor;
-import org.strongback.components.Switch;
 
 public class Roller implements Requirable {
+	public static final double MOTOR_SPEED = 1.0;
+
 	private final Motor wheels;
-	private final Switch ballIn;
 	
-	public Roller(Motor wheels, Switch ballIn) {
+	public Roller(Motor wheels) {
 		this.wheels = wheels;
-		this.ballIn = ballIn;
 	}
 	
 	/*
 	 * Pulls a ball in.
 	 */
 	public void suck() {
-		wheels.setSpeed(1.0);
+		wheels.setSpeed(-1 * MOTOR_SPEED);
 	}
 	
 	/*
 	 * Pushes a ball out.
 	 */
 	public void spit() {
-		wheels.setSpeed(-1.0);
+		wheels.setSpeed(MOTOR_SPEED);
 	}
 	
 	/*
@@ -54,12 +53,5 @@ public class Roller implements Requirable {
 	 */
 	public void stop(){
 		wheels.stop();
-	}
-	
-	/*
-	 * Checks if a ball is in.
-	 */
-	public boolean ballIn() {
-		return ballIn.isTriggered();
 	}
 }
