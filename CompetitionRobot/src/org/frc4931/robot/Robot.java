@@ -64,13 +64,13 @@ public class Robot extends IterativeRobot {
     private Switch armUp;
     private Switch armDown;
 
-    public static final double AUTO_DRIVE_SPEED=2;
-    public static final double AUTO_DRIVE_TIME=0;
+    public static final double AUTO_DRIVE_SPEED=1;
+    public static final double AUTO_DRIVE_TIME=2;
   
     @Override
     public void robotInit() {
         Strongback.configure()
-                  .recordNoData().recordNoEvents().recordNoCommands();
+                  .recordNoData().recordNoEvents();
 //                  .recordDataToFile(LOG_FILES_DIRECTORY_PATH)
 //                  .recordEventsToFile(LOG_FILES_DIRECTORY_PATH, 2097152);
 
