@@ -23,10 +23,8 @@
 /* Created Sun Jan 10 12:59:55 CST 2016 */
 package org.frc4931.robot;
 
-import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.vision.USBCamera;
 import org.frc4931.robot.arm.Arm;
 import org.frc4931.robot.arm.CalibrateArm;
 import org.frc4931.robot.drive.DriveSystem;
@@ -66,23 +64,24 @@ public class Robot extends IterativeRobot {
 
     public static final double AUTO_DRIVE_SPEED=1;
     public static final double AUTO_DRIVE_TIME=2;
-  
+
     @Override
     public void robotInit() {
         Strongback.configure()
-                  .recordNoData().recordNoEvents();
-//                  .recordDataToFile(LOG_FILES_DIRECTORY_PATH)
-//                  .recordEventsToFile(LOG_FILES_DIRECTORY_PATH, 2097152);
+//                  .recordNoData().recordNoEvents().recordNoCommands();
+                  .recordDataToFile(LOG_FILES_DIRECTORY_PATH)
+                  .recordEventsToFile(LOG_FILES_DIRECTORY_PATH, 2097152);
 
         // Define the motors and the drive system ...
-        Motor leftFrontMotor = Hardware.Motors.talon(LEFT_FRONT_MOTOR_PORT);
-        Motor leftRearMotor = Hardware.Motors.talon(LEFT_REAR_MOTOR_PORT);
-        Motor rightFrontMotor = Hardware.Motors.talon(RIGHT_FRONT_MOTOR_PORT);
-        Motor rightRearMotor = Hardware.Motors.talon(RIGHT_REAR_MOTOR_PORT);
+        Motor leftFrontMotor = Hardware.Motors.victorSP(LEFT_FRONT_MOTOR_PORT);
+        Motor leftRearMotor = Hardware.Motors.victorSP(LEFT_REAR_MOTOR_PORT);
+        Motor rightFrontMotor = Hardware.Motors.victorSP(RIGHT_FRONT_MOTOR_PORT);
+        Motor rightRearMotor = Hardware.Motors.victorSP(RIGHT_REAR_MOTOR_PORT);
         Motor leftMotors = Motor.compose(leftFrontMotor, leftRearMotor);
         Motor rightMotors = Motor.compose(rightFrontMotor, rightRearMotor).invert();
         TankDrive tankDrive = new TankDrive(leftMotors, rightMotors);
         drive = new DriveSystem(tankDrive);
+
         // Initialize the subsystems ...
         TalonSRX armMotor = Hardware.Motors.talonSRX(ARM_MOTOR_CAN_ID, ARM_PULSES_PER_DEGREE);
         arm = new Arm(armMotor);
@@ -119,8 +118,8 @@ public class Robot extends IterativeRobot {
     @Override
     public void autonomousInit() {
         // Start Strongback functions ...
-    	Strongback.submit(new TimedDrive(drive,AUTO_DRIVE_SPEED,0,AUTO_DRIVE_TIME));
         Strongback.restart();
+        Strongback.submit(new TimedDrive(drive,AUTO_DRIVE_SPEED,0,AUTO_DRIVE_TIME));
     }
 
     @Override
