@@ -24,7 +24,6 @@ public class Map {
 	private Image imageField = new Image("/application/Field.png",814,400,true,false);
 	private Image imageBA = new Image("/application/BlueDot.png",39,39,true,false);
 	private Image imageRA = new Image("/application/RedDot.png",39,39,true,false);
-	private Image imageSP = new Image("/application/StartingPosition.png",39,39,true,false);
 	private Image imageObg = new Image("/application/ObstacleGreenHighlight.png",28,63,true,false);
 	private Image imageRS = new Image("/application/RedSide.png",407,400,true,false);
 	private Image imageBS = new Image("/application/BlueSide.png",407,400,true,false);
@@ -61,7 +60,6 @@ public class Map {
 				     oB = new BuildObstacles(side.getSide());
 				     flag3=false;
 				}
-				oB.shortestObstacles(oB, robot);
 				for(int i=0;i<6;i++)
 				{
 				gc.fillRect(convertPixels(startBS[i].getX()), convertPixels(startBS[i].getY()), startBS[i].getWidth(), startBS[i].getHeight());
