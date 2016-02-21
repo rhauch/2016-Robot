@@ -45,10 +45,10 @@ import org.strongback.hardware.Hardware;
 public class Robot extends IterativeRobot {
 
     private static final String LOG_FILES_DIRECTORY_PATH = "/home/lvuser/";
-    private static final int LEFT_FRONT_MOTOR_PORT = 2;
-    private static final int LEFT_REAR_MOTOR_PORT = 3;
-    private static final int RIGHT_FRONT_MOTOR_PORT = 0;
-    private static final int RIGHT_REAR_MOTOR_PORT = 1;
+    private static final int LEFT_FRONT_MOTOR_CHANNEL = 2;
+    private static final int LEFT_REAR_MOTOR_CHANNEL = 3;
+    private static final int RIGHT_FRONT_MOTOR_CHANNEL = 0;
+    private static final int RIGHT_REAR_MOTOR_CHANNEL = 1;
     private static final int ROLLER_MOTOR_CAN_ID = 0;
     private static final int ARM_MOTOR_CAN_ID = 1;
     private static final double ARM_PULSES_PER_DEGREE = 7.0 * 71.0 / 360.0;
@@ -73,10 +73,10 @@ public class Robot extends IterativeRobot {
                   .recordEventsToFile(LOG_FILES_DIRECTORY_PATH, 2097152);
 
         // Define the motors and the drive system ...
-        Motor leftFrontMotor = Hardware.Motors.victorSP(LEFT_FRONT_MOTOR_PORT);
-        Motor leftRearMotor = Hardware.Motors.victorSP(LEFT_REAR_MOTOR_PORT);
-        Motor rightFrontMotor = Hardware.Motors.victorSP(RIGHT_FRONT_MOTOR_PORT);
-        Motor rightRearMotor = Hardware.Motors.victorSP(RIGHT_REAR_MOTOR_PORT);
+        Motor leftFrontMotor = Hardware.Motors.victorSP(LEFT_FRONT_MOTOR_CHANNEL);
+        Motor leftRearMotor = Hardware.Motors.victorSP(LEFT_REAR_MOTOR_CHANNEL);
+        Motor rightFrontMotor = Hardware.Motors.victorSP(RIGHT_FRONT_MOTOR_CHANNEL);
+        Motor rightRearMotor = Hardware.Motors.victorSP(RIGHT_REAR_MOTOR_CHANNEL);
         Motor leftMotors = Motor.compose(leftFrontMotor, leftRearMotor);
         Motor rightMotors = Motor.compose(rightFrontMotor, rightRearMotor).invert();
         TankDrive tankDrive = new TankDrive(leftMotors, rightMotors);
