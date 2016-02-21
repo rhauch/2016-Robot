@@ -30,6 +30,7 @@ import edu.wpi.first.wpilibj.vision.USBCamera;
 import org.frc4931.robot.arm.Arm;
 import org.frc4931.robot.arm.CalibrateArm;
 import org.frc4931.robot.drive.DriveSystem;
+import org.frc4931.robot.drive.TimedDrive;
 import org.frc4931.robot.roller.Roller;
 import org.frc4931.robot.roller.Spit;
 import org.frc4931.robot.roller.Suck;
@@ -63,10 +64,13 @@ public class Robot extends IterativeRobot {
     private Switch armUp;
     private Switch armDown;
 
+    public static final double AUTO_DRIVE_SPEED=1;
+    public static final double AUTO_DRIVE_TIME=2;
+  
     @Override
     public void robotInit() {
         Strongback.configure()
-                  .recordNoData().recordNoEvents().recordNoCommands();
+                  .recordNoData().recordNoEvents();
 //                  .recordDataToFile(LOG_FILES_DIRECTORY_PATH)
 //                  .recordEventsToFile(LOG_FILES_DIRECTORY_PATH, 2097152);
 
@@ -79,7 +83,6 @@ public class Robot extends IterativeRobot {
         Motor rightMotors = Motor.compose(rightFrontMotor, rightRearMotor);
         TankDrive tankDrive = new TankDrive(leftMotors, rightMotors);
         drive = new DriveSystem(tankDrive);
-
         // Initialize the subsystems ...
         TalonSRX armMotor = Hardware.Motors.talonSRX(ARM_MOTOR_CAN_ID, ARM_PULSES_PER_DEGREE);
         arm = new Arm(armMotor);
@@ -119,6 +122,7 @@ public class Robot extends IterativeRobot {
     @Override
     public void autonomousInit() {
         // Start Strongback functions ...
+    	Strongback.submit(new TimedDrive(drive,AUTO_DRIVE_SPEED,0,AUTO_DRIVE_TIME));
         Strongback.restart();
     }
 

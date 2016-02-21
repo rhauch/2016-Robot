@@ -48,6 +48,7 @@ public class TimedDrive extends Command {
     
     @Override
     public boolean execute() {
+    	System.out.print("is driving");
         drive.arcade(driveSpeed, turnSpeed);
         return false;   // not complete; it will time out automatically
     }
