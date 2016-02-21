@@ -86,10 +86,6 @@ public class Robot extends IterativeRobot {
         TalonSRX armMotor = Hardware.Motors.talonSRX(ARM_MOTOR_CAN_ID, ARM_PULSES_PER_DEGREE);
         arm = new Arm(armMotor);
 
-        Motor rollerMotor = Hardware.Motors.talonSRX(ROLLER_MOTOR_CAN_ID);
-        Switch rollerSwitch = Hardware.Switches.normallyOpen(ROLLER_SWITCH_CHANNEL);
-        roller = new Roller(rollerMotor, rollerSwitch);
-
         // Define the interface components ...
         FlightStick joystick = Hardware.HumanInterfaceDevices.logitechAttack3D(0);
         ContinuousRange throttle = joystick.getThrottle().map(t -> (1.0 - t) / 2);
@@ -99,6 +95,11 @@ public class Robot extends IterativeRobot {
         armDown = joystick.getButton(4);
 		Switch suck = joystick.getButton(3);
         Switch spit = joystick.getButton(5);
+
+        Motor rollerMotor = Hardware.Motors.talonSRX(ROLLER_MOTOR_CAN_ID).invert();
+//        Switch rollerSwitch = Hardware.Switches.normallyOpen(ROLLER_SWITCH_CHANNEL);
+        Switch rollerSwitch = joystick.getThumb();
+        roller = new Roller(rollerMotor, rollerSwitch);
 
         // Register the functions that run when the switches change state ...
         SwitchReactor reactor = Strongback.switchReactor();
