@@ -22,7 +22,6 @@ public class Map {
 	private Image imageField = new Image("/application/Field.png",814,400,true,false);
 	private Image imageBA = new Image("/application/BlueDot.png",39,39,true,false);
 	private Image imageRA = new Image("/application/RedDot.png",39,39,true,false);
-	//private Image imageSP = new Image("/application/StartingPosition.png",39,39,true,false);
 	private Image imageObg = new Image("/application/ObstacleGreenHighlight.png",28,63,true,false);
 	private Image imageRS = new Image("/application/RedSide.png",407,400,true,false);
 	private Image imageBS = new Image("/application/BlueSide.png",407,400,true,false);
@@ -30,7 +29,8 @@ public class Map {
 	private double sy = 0;
 	private boolean flag = false;
 	private boolean flag2 = false;
-	
+	private boolean flag3 = true;
+
 	public void update(GraphicsContext gc)
 	{
 		if(flag == true && flag2 == true)
@@ -53,7 +53,11 @@ public class Map {
 			if(side.getSide())
 			{
 				gc.drawImage(imageField,0,0);
-				oB = new BuildObstacles(side.getSide());
+				if(flag3)
+				{
+				     oB = new BuildObstacles(side.getSide());
+				     flag3=false;
+				}
 				for(int i=0;i<6;i++)
 				{
 				gc.fillRect(convertPixels(startBS[i].getX()), convertPixels(startBS[i].getY()), startBS[i].getWidth(), startBS[i].getHeight());
@@ -62,6 +66,11 @@ public class Map {
 			}
 			else
 			{
+				if(flag3)
+				{
+				     oB = new BuildObstacles(side.getSide());
+				     flag3=false;
+				}
 				gc.drawImage(imageField,0,0);
 				for(int i=0;i<6;i++)
 				{
@@ -98,6 +107,7 @@ public class Map {
 						flag = true;
 						robot = new RobotConversion(convertPixels(sp[i].getX()), convertPixels(sp[i].getY()));
 						robot.setRotation(-90);
+						oB.shortestObstacles(oB, robot);
 						//System.out.println((x/PIXELS_PER_METER) +" "+ (y/PIXELS_PER_METER));
 					}
 				}
