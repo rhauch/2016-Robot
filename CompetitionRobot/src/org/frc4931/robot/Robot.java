@@ -23,17 +23,12 @@
 /* Created Sun Jan 10 12:59:55 CST 2016 */
 package org.frc4931.robot;
 
-import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.IterativeRobot;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.vision.USBCamera;
 import org.frc4931.robot.arm.Arm;
 import org.frc4931.robot.arm.CalibrateArm;
 import org.frc4931.robot.drive.DriveSystem;
 import org.frc4931.robot.drive.TimedDrive;
 import org.frc4931.robot.roller.Roller;
-import org.frc4931.robot.roller.Spit;
-import org.frc4931.robot.roller.Suck;
 import org.strongback.Strongback;
 import org.strongback.SwitchReactor;
 import org.strongback.components.Motor;
@@ -47,14 +42,13 @@ import org.strongback.hardware.Hardware;
 public class Robot extends IterativeRobot {
 
     private static final String LOG_FILES_DIRECTORY_PATH = "/home/lvuser/";
-    private static final int LEFT_FRONT_MOTOR_PORT = 2;
-    private static final int LEFT_REAR_MOTOR_PORT = 3;
-    private static final int RIGHT_FRONT_MOTOR_PORT = 0;
-    private static final int RIGHT_REAR_MOTOR_PORT = 1;
+    private static final int LEFT_FRONT_MOTOR_CHANNEL = 2;
+    private static final int LEFT_REAR_MOTOR_CHANNEL = 3;
+    private static final int RIGHT_FRONT_MOTOR_CHANNEL = 0;
+    private static final int RIGHT_REAR_MOTOR_CHANNEL = 1;
     private static final int ROLLER_MOTOR_CAN_ID = 0;
     private static final int ARM_MOTOR_CAN_ID = 1;
     private static final double ARM_PULSES_PER_DEGREE = 7.0 * 71.0 / 360.0;
-	private static final int ROLLER_SWITCH_CHANNEL = 0;
 
     private DriveSystem drive;
     private Arm arm;
@@ -63,36 +57,35 @@ public class Robot extends IterativeRobot {
     private ContinuousRange turnSpeed;
     private Switch armUp;
     private Switch armDown;
+    private Switch rollerIn;
+    private Switch rollerOut;
 
     public static final double AUTO_DRIVE_SPEED=1;
     public static final double AUTO_DRIVE_TIME=2;
-  
+
     @Override
     public void robotInit() {
         Strongback.configure()
-                  .recordNoData().recordNoEvents();
-//                  .recordDataToFile(LOG_FILES_DIRECTORY_PATH)
-//                  .recordEventsToFile(LOG_FILES_DIRECTORY_PATH, 2097152);
+//                  .recordNoData().recordNoEvents().recordNoCommands();
+                  .recordDataToFile(LOG_FILES_DIRECTORY_PATH)
+                  .recordEventsToFile(LOG_FILES_DIRECTORY_PATH, 2097152);
 
         // Define the motors and the drive system ...
-        Motor leftFrontMotor = Hardware.Motors.talon(LEFT_FRONT_MOTOR_PORT);
-        Motor leftRearMotor = Hardware.Motors.talon(LEFT_REAR_MOTOR_PORT);
-        Motor rightFrontMotor = Hardware.Motors.talon(RIGHT_FRONT_MOTOR_PORT);
-        Motor rightRearMotor = Hardware.Motors.talon(RIGHT_REAR_MOTOR_PORT);
-        Motor leftMotors = Motor.compose(leftFrontMotor, leftRearMotor).invert();
-        Motor rightMotors = Motor.compose(rightFrontMotor, rightRearMotor);
+        Motor leftFrontMotor = Hardware.Motors.victorSP(LEFT_FRONT_MOTOR_CHANNEL);
+        Motor leftRearMotor = Hardware.Motors.victorSP(LEFT_REAR_MOTOR_CHANNEL);
+        Motor rightFrontMotor = Hardware.Motors.victorSP(RIGHT_FRONT_MOTOR_CHANNEL);
+        Motor rightRearMotor = Hardware.Motors.victorSP(RIGHT_REAR_MOTOR_CHANNEL);
+        Motor leftMotors = Motor.compose(leftFrontMotor, leftRearMotor);
+        Motor rightMotors = Motor.compose(rightFrontMotor, rightRearMotor).invert();
         TankDrive tankDrive = new TankDrive(leftMotors, rightMotors);
         drive = new DriveSystem(tankDrive);
+
         // Initialize the subsystems ...
         TalonSRX armMotor = Hardware.Motors.talonSRX(ARM_MOTOR_CAN_ID, ARM_PULSES_PER_DEGREE);
         arm = new Arm(armMotor);
 
         Motor rollerMotor = Hardware.Motors.talonSRX(ROLLER_MOTOR_CAN_ID);
-        Switch rollerSwitch = Hardware.Switches.normallyOpen(ROLLER_SWITCH_CHANNEL);
-        roller = new Roller(rollerMotor, rollerSwitch);
-
-//        CameraServer.getInstance().setQuality(50);
-//        CameraServer.getInstance().startAutomaticCapture(new USBCamera());
+        roller = new Roller(rollerMotor);
 
         // Define the interface components ...
         FlightStick joystick = Hardware.HumanInterfaceDevices.logitechAttack3D(0);
@@ -101,15 +94,13 @@ public class Robot extends IterativeRobot {
         turnSpeed = joystick.getYaw().scale(throttle::read);
         armUp = joystick.getButton(6);
         armDown = joystick.getButton(4);
-		Switch suck = joystick.getButton(3);
-        Switch spit = joystick.getButton(5);
+		rollerIn = joystick.getButton(3);
+        rollerOut = joystick.getButton(5);
 
         // Register the functions that run when the switches change state ...
         SwitchReactor reactor = Strongback.switchReactor();
 
         reactor.onTriggered(joystick.getTrigger(), drive::toggleDirectionFlipped);
-		reactor.onTriggered(suck, ()->Strongback.submit(new Suck(roller)));
-        reactor.onTriggered(spit, ()->Strongback.submit(new Spit(roller)));
 
         // Set up the data recorder to capture the left & right motor speeds and the sensivity.
         // We have to do this before we start Strongback...
@@ -122,8 +113,8 @@ public class Robot extends IterativeRobot {
     @Override
     public void autonomousInit() {
         // Start Strongback functions ...
-    	Strongback.submit(new TimedDrive(drive,AUTO_DRIVE_SPEED,0,AUTO_DRIVE_TIME));
         Strongback.restart();
+        Strongback.submit(new TimedDrive(drive,AUTO_DRIVE_SPEED,0,AUTO_DRIVE_TIME));
     }
 
     @Override
@@ -139,6 +130,7 @@ public class Robot extends IterativeRobot {
     @Override
     public void teleopPeriodic() {
         drive.arcade(driveSpeed.read(), turnSpeed.read());
+
         if (armUp.isTriggered() == armDown.isTriggered()) {
             arm.stop();
         } else if (armUp.isTriggered()) {
@@ -146,7 +138,14 @@ public class Robot extends IterativeRobot {
         } else if (armDown.isTriggered()) {
             arm.lower();
         }
-        SmartDashboard.putNumber("Arm Angle", arm.getAngle());
+
+        if (rollerIn.isTriggered() == rollerOut.isTriggered()) {
+            roller.stop();
+        } else if (rollerIn.isTriggered()) {
+            roller.suck();
+        } else if (rollerOut.isTriggered()) {
+            roller.spit();
+        }
     }
 
     @Override
