@@ -22,29 +22,27 @@
 
 package org.frc4931.robot.components;
 
-import edu.wpi.first.wpilibj.Timer;
-import org.frc4931.robot.components.IMU;
-import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
+import org.frc4931.robot.math.EulerAngle;
+import org.frc4931.robot.math.Quaternion;
+import org.frc4931.robot.math.Vector3d;
 
 public class Locator {
     private final IMU imu;
 
     private long lastUpdate;
-    private double heading;
-    private double roll;
-    private double pitch;
-    private double accX;
-    private double accY;
-    private double accZ;
-    private double velX;
-    private double velY;
-    private double velZ;
-    private double posX;
-    private double posY;
-    private double posZ;
+    private EulerAngle eulerAngle;
+    private Vector3d acceleration;
+    private Vector3d velocity;
+    private Vector3d position;
 
     public Locator(IMU imu) {
         this.imu = imu;
+        zero();
+    }
+
+    public void zero() {
+        velocity = Vector3d.ZERO;
+        position = Vector3d.ZERO;
         lastUpdate = System.currentTimeMillis();
     }
 
@@ -53,90 +51,37 @@ public class Locator {
         double delta = (updateTime - lastUpdate) / 1000.0;
         lastUpdate = updateTime;
 
-        heading = imu.getHeading();
-        roll = imu.getRoll();
-        pitch = imu.getPitch();
-        double w = -1 * imu.getQuatW(); // Flip the spin; then it will be the inverse of our orientation.
-        double x = imu.getQuatX();
-        double y = imu.getQuatY();
-        double z = imu.getQuatZ();
-        double relAccX = imu.getAccX();
-        double relAccY = imu.getAccY();
-        double relAccZ = imu.getAccZ();
+        eulerAngle = imu.getEulerOrientation();
+        Quaternion quaternion = imu.getQuaternionOrientation();
+        Vector3d linearAccel = imu.getLinearAcceleration();
 
-        // Quaternion rotation formula taken from https://en.wikipedia.org/wiki/Rotation_matrix#Quaternion
-        //TODO Test and verify the algorithm
-
-        accX = (1  -  2 * y * y  -  2 * z *z) * relAccX +
-                (2 * x * y  -  2 * z * w) * relAccY +
-                (2 * x * z  +  2 * y * w) * relAccZ;
-        accY = (2 * x * y  +  2 * z * w) * relAccX +
-                (1  -  2 * x * x  -  2 * z * z) * relAccY +
-                (2 * y * z  -  2 * x * w) * relAccZ;
-        accZ = (2 * x * z  -  2 * y * w) * relAccX +
-                (2 * y * z  +  2 * x * w) * relAccY +
-                (1  -  2 * x * x  -  2 * y * y) * relAccZ;
+        // Orient the linear acceleration to absolute axes
+        acceleration = linearAccel.rotate(quaternion.conjugate());
 
         // V = Vi + A * dt
-        velX += accX * delta;
-        velY += accY * delta;
-        velZ += accZ * delta;
+        velocity = velocity.add(acceleration.mul(delta));
 
         // P = Pi + V * dt
-        posX += velX * delta;
-        posY += velY * delta;
-        posZ += velZ * delta;
+        position = position.add(velocity.mul(delta));
     }
 
     public IMU getIMU() {
         return imu;
     }
 
-    public double getHeading() {
-        return heading;
+    public EulerAngle getEulerAngle() {
+        return eulerAngle;
     }
 
-    public double getRoll() {
-        return roll;
+    public Vector3d getAcceleration() {
+        return acceleration;
     }
 
-    public double getPitch() {
-        return pitch;
+    public Vector3d getVelocity() {
+        return velocity;
     }
 
-    public double getAccX() {
-        return accX;
-    }
-
-    public double getAccY() {
-        return accY;
-    }
-
-    public double getAccZ() {
-        return accZ;
-    }
-
-    public double getVelX() {
-        return velX;
-    }
-
-    public double getVelY() {
-        return velY;
-    }
-
-    public double getVelZ() {
-        return velZ;
-    }
-
-    public double getPosX() {
-        return posX;
-    }
-
-    public double getPosY() {
-        return posY;
-    }
-
-    public double getPosZ() {
-        return posZ;
+    public Vector3d getPosition() {
+        return position;
     }
 }

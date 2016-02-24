@@ -22,25 +22,15 @@
 
 package org.frc4931.robot.components;
 
+import org.frc4931.robot.math.EulerAngle;
+import org.frc4931.robot.math.Quaternion;
+import org.frc4931.robot.math.Vector3d;
+
 public interface IMU {
 
-    double getHeading();
+    EulerAngle getEulerOrientation();
 
-    double getRoll();
+    Quaternion getQuaternionOrientation();
 
-    double getPitch();
-
-    double getQuatW();
-
-    double getQuatX();
-
-    double getQuatY();
-
-    double getQuatZ();
-
-    double getAccX();
-
-    double getAccY();
-
-    double getAccZ();
+    Vector3d getLinearAcceleration();
 }

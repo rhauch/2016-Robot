@@ -22,54 +22,25 @@
 
 package org.frc4931.robot.components;
 
+import java.util.Vector;
+import org.frc4931.robot.math.EulerAngle;
+import org.frc4931.robot.math.Quaternion;
+import org.frc4931.robot.math.Vector3d;
+
 public class DummyIMU implements IMU {
+
     @Override
-    public double getHeading() {
-        return 0;
+    public EulerAngle getEulerOrientation() {
+        return EulerAngle.ZERO;
     }
 
     @Override
-    public double getRoll() {
-        return 0;
+    public Quaternion getQuaternionOrientation() {
+        return Quaternion.IDENTITY;
     }
 
     @Override
-    public double getPitch() {
-        return 0;
-    }
-
-    @Override
-    public double getQuatW() {
-        return 1;
-    }
-
-    @Override
-    public double getQuatX() {
-        return 0;
-    }
-
-    @Override
-    public double getQuatY() {
-        return 0;
-    }
-
-    @Override
-    public double getQuatZ() {
-        return 0;
-    }
-
-    @Override
-    public double getAccX() {
-        return 0;
-    }
-
-    @Override
-    public double getAccY() {
-        return 0;
-    }
-
-    @Override
-    public double getAccZ() {
-        return 0;
+    public Vector3d getLinearAcceleration() {
+        return Vector3d.ZERO;
     }
 }

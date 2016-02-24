@@ -22,105 +22,45 @@
 
 package org.frc4931.robot.components;
 
+import org.frc4931.robot.math.EulerAngle;
+import org.frc4931.robot.math.Quaternion;
+import org.frc4931.robot.math.Vector3d;
+
 public class MockIMU implements IMU {
-    private double heading;
-    private double roll;
-    private double pitch;
-    private double quatW;
-    private double quatX;
-    private double quatY;
-    private double quatZ;
-    private double accX;
-    private double accY;
-    private double accZ;
+    private EulerAngle eulerOrientation;
+    private Quaternion quaternionOrientation;
+    private Vector3d linearAcceleration;
 
-    @Override
-    public double getHeading() {
-        return heading;
-    }
-
-    public void setHeading(double heading) {
-        this.heading = heading;
+    public MockIMU() {
+        eulerOrientation = EulerAngle.ZERO;
+        quaternionOrientation = Quaternion.IDENTITY;
+        linearAcceleration = Vector3d.ZERO;
     }
 
     @Override
-    public double getRoll() {
-        return roll;
+    public EulerAngle getEulerOrientation() {
+        return eulerOrientation;
     }
 
-    public void setRoll(double roll) {
-        this.roll = roll;
-    }
-
-    @Override
-    public double getPitch() {
-        return pitch;
-    }
-
-    public void setPitch(double pitch) {
-        this.pitch = pitch;
+    public void setEulerOrientation(EulerAngle eulerOrientation) {
+        this.eulerOrientation = eulerOrientation;
     }
 
     @Override
-    public double getQuatW() {
-        return quatW;
+    public Quaternion getQuaternionOrientation() {
+        return quaternionOrientation;
     }
 
-    public void setQuatW(double quatW) {
-        this.quatW = quatW;
-    }
-
-    @Override
-    public double getQuatX() {
-        return quatX;
-    }
-
-    public void setQuatX(double quatX) {
-        this.quatX = quatX;
+    public void setQuaternionOrientation(Quaternion quaternionOrientation) {
+        this.quaternionOrientation = quaternionOrientation;
     }
 
     @Override
-    public double getQuatY() {
-        return quatY;
+    public Vector3d getLinearAcceleration() {
+        return linearAcceleration;
     }
 
-    public void setQuatY(double quatY) {
-        this.quatY = quatY;
-    }
-
-    @Override
-    public double getQuatZ() {
-        return quatZ;
-    }
-
-    public void setQuatZ(double quatZ) {
-        this.quatZ = quatZ;
-    }
-
-    @Override
-    public double getAccX() {
-        return accX;
-    }
-
-    public void setAccX(double accX) {
-        this.accX = accX;
-    }
-
-    @Override
-    public double getAccY() {
-        return accY;
-    }
-
-    public void setAccY(double accY) {
-        this.accY = accY;
-    }
-
-    @Override
-    public double getAccZ() {
-        return accZ;
-    }
-
-    public void setAccZ(double accZ) {
-        this.accZ = accZ;
+    public void setLinearAcceleration(Vector3d linearAcceleration) {
+        this.linearAcceleration = linearAcceleration;
     }
 }
