@@ -25,12 +25,27 @@ package org.frc4931.robot.components;
 import org.frc4931.robot.math.EulerAngle;
 import org.frc4931.robot.math.Quaternion;
 import org.frc4931.robot.math.Vector3d;
+import org.strongback.annotation.Immutable;
 
+@FunctionalInterface
 public interface IMU {
 
-    EulerAngle getEulerOrientation();
+    State getState();
 
-    Quaternion getQuaternionOrientation();
+    static IMU stationary() {
+        return () -> new State(EulerAngle.ZERO, Quaternion.IDENTITY, Vector3d.ZERO);
+    }
 
-    Vector3d getLinearAcceleration();
+    @Immutable
+    class State {
+        public EulerAngle eulerOrientation;
+        public Quaternion quaternionOrientation;
+        public Vector3d linearAccel;
+
+        State(EulerAngle eulerOrientation, Quaternion quaternionOrientation, Vector3d linearAccel) {
+            this.eulerOrientation = eulerOrientation;
+            this.quaternionOrientation = quaternionOrientation;
+            this.linearAccel = linearAccel;
+        }
+    }
 }

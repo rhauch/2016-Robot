@@ -30,16 +30,14 @@ import org.frc4931.robot.math.Vector3d;
 public class BoschIMU implements IMU {
     private final I2C link;
 
-    private EulerAngle eulerAngle;
-    private Quaternion quaternion;
-    private Vector3d acceleration;
+    private volatile State state;
 
     public BoschIMU(I2C.Port port) {
         link = new I2C(port, 0x28);
         link.write(0x3D, 0x0C); // OPR_MODE = NDOF
     }
 
-    public void poll() {
+    public synchronized void poll() {
 
         byte[] buffer = new byte[20];
         link.read(0x1A, 20, buffer); // EUL, QUA_Data, LIA_Data
@@ -61,23 +59,14 @@ public class BoschIMU implements IMU {
         double accY = (buffer[16] + (buffer[17] << 8) << 18 >> 18) / 100.0;
         double accZ = (buffer[18] + (buffer[19] << 8) << 18 >> 18) / 100.0;
 
-        eulerAngle = new EulerAngle(heading, roll, pitch);
-        quaternion = new Quaternion(quatW, quatX, quatY, quatZ);
-        acceleration = new Vector3d(accX, accY, accZ);
+        EulerAngle eulerOrientation = new EulerAngle(heading, roll, pitch);
+        Quaternion quaternionOrientation = new Quaternion(quatW, quatX, quatY, quatZ);
+        Vector3d linearAcceleration = new Vector3d(accX, accY, accZ);
+        state = new State(eulerOrientation, quaternionOrientation, linearAcceleration);
     }
 
     @Override
-    public EulerAngle getEulerOrientation() {
-        return eulerAngle;
-    }
-
-    @Override
-    public Quaternion getQuaternionOrientation() {
-        return quaternion;
-    }
-
-    @Override
-    public Vector3d getLinearAcceleration() {
-        return acceleration;
+    public synchronized State getState() {
+        return state;
     }
 }

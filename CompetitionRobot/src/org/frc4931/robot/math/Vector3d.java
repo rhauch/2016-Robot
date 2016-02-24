@@ -34,6 +34,7 @@ public class Vector3d {
     private final double x;
     private final double y;
     private final double z;
+    private final int hash;
 
     /**
      * Constructs a vector from a set of coordinates.
@@ -45,6 +46,16 @@ public class Vector3d {
         this.x = x;
         this.y = y;
         this.z = z;
+
+        int hash;
+        long temp;
+        temp = Double.doubleToLongBits(x);
+        hash = (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(y);
+        hash = 31 * hash + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(z);
+        hash = 31 * hash + (int) (temp ^ (temp >>> 32));
+        this.hash = hash;
     }
 
     /**
@@ -53,17 +64,6 @@ public class Vector3d {
      */
     public Vector3d(Vector3d vec) {
         this(vec.x, vec.y, vec.z);
-    }
-
-    /**
-     * Constructs a vector using values for elements from a buffer.
-     * <br>This constructor will get the next 3 values available in the buffer.
-     * @param buffer The buffer from which elements will be taken.
-     */
-    public Vector3d(FloatBuffer buffer) {
-        x = buffer.get();
-        y = buffer.get();
-        z = buffer.get();
     }
 
     /**
@@ -226,7 +226,7 @@ public class Vector3d {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof Vector3d)) return false;
 
         Vector3d vector3D = (Vector3d) o;
 
@@ -238,14 +238,6 @@ public class Vector3d {
 
     @Override
     public int hashCode() {
-        int result;
-        long temp;
-        temp = Double.doubleToLongBits(x);
-        result = (int) (temp ^ (temp >>> 32));
-        temp = Double.doubleToLongBits(y);
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
-        temp = Double.doubleToLongBits(z);
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
-        return result;
+        return hash;
     }
 }

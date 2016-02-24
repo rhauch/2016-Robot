@@ -22,66 +22,66 @@
 
 package org.frc4931.robot.components;
 
-import org.frc4931.robot.math.EulerAngle;
 import org.frc4931.robot.math.Quaternion;
 import org.frc4931.robot.math.Vector3d;
+import org.strongback.annotation.Immutable;
 
 public class Locator {
     private final IMU imu;
 
-    private long lastUpdate;
-    private EulerAngle eulerAngle;
-    private Vector3d acceleration;
-    private Vector3d velocity;
-    private Vector3d position;
+    private volatile long lastUpdate;
+    private volatile IMU.State imuState;
+    private State state;
 
     public Locator(IMU imu) {
         this.imu = imu;
         zero();
     }
 
-    public void zero() {
-        velocity = Vector3d.ZERO;
-        position = Vector3d.ZERO;
+    public synchronized void zero() {
+        state = new State(Vector3d.ZERO, Vector3d.ZERO, Vector3d.ZERO);
         lastUpdate = System.currentTimeMillis();
     }
 
-    public void update() {
+    public synchronized void update() {
         long updateTime = System.currentTimeMillis();
         double delta = (updateTime - lastUpdate) / 1000.0;
         lastUpdate = updateTime;
 
-        eulerAngle = imu.getEulerOrientation();
-        Quaternion quaternion = imu.getQuaternionOrientation();
-        Vector3d linearAccel = imu.getLinearAcceleration();
+        imuState = imu.getState();
+        Quaternion quaternion = imuState.quaternionOrientation;
+        Vector3d linearAccel = imuState.linearAccel;
 
         // Orient the linear acceleration to absolute axes
-        acceleration = linearAccel.rotate(quaternion.conjugate());
+        Vector3d acceleration = linearAccel.rotate(quaternion.conjugate());
 
         // V = Vi + A * dt
-        velocity = velocity.add(acceleration.mul(delta));
+        Vector3d velocity = state.velocity.add(acceleration.mul(delta));
 
         // P = Pi + V * dt
-        position = position.add(velocity.mul(delta));
+        Vector3d position = state.position.add(velocity.mul(delta));
+
+        state = new State(acceleration, velocity, position);
     }
 
-    public IMU getIMU() {
-        return imu;
+    public synchronized IMU.State getImuState() {
+        return imuState;
     }
 
-    public EulerAngle getEulerAngle() {
-        return eulerAngle;
+    public synchronized State getState() {
+        return state;
     }
 
-    public Vector3d getAcceleration() {
-        return acceleration;
-    }
+    @Immutable
+    public class State {
+        public Vector3d acceleration;
+        public Vector3d velocity;
+        public Vector3d position;
 
-    public Vector3d getVelocity() {
-        return velocity;
-    }
-
-    public Vector3d getPosition() {
-        return position;
+        State(Vector3d acceleration, Vector3d velocity, Vector3d position) {
+            this.acceleration = acceleration;
+            this.velocity = velocity;
+            this.position = position;
+        }
     }
 }

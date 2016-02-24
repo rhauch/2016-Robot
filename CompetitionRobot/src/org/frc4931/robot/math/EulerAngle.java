@@ -28,17 +28,26 @@ public class EulerAngle {
     private final double heading;
     private final double roll;
     private final double pitch;
+    private final int hash;
 
     public EulerAngle(double heading, double roll, double pitch) {
         this.heading = heading;
         this.roll = roll;
         this.pitch = pitch;
+
+        int hash;
+        long temp;
+        temp = Double.doubleToLongBits(heading);
+        hash = (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(roll);
+        hash = 31 * hash + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(pitch);
+        hash = 31 * hash + (int) (temp ^ (temp >>> 32));
+        this.hash = hash;
     }
 
     public EulerAngle(EulerAngle eulerAngle) {
-        heading = eulerAngle.heading;
-        roll = eulerAngle.roll;
-        pitch = eulerAngle.pitch;
+        this(eulerAngle.heading, eulerAngle.roll, eulerAngle.pitch);
     }
 
     public double getHeading() {
@@ -51,5 +60,23 @@ public class EulerAngle {
 
     public double getPitch() {
         return pitch;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof EulerAngle)) return false;
+
+        EulerAngle that = (EulerAngle) o;
+
+        return Double.compare(that.heading, heading) == 0 &&
+                Double.compare(that.roll, roll) == 0 &&
+                Double.compare(that.pitch, pitch) == 0;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return hash;
     }
 }

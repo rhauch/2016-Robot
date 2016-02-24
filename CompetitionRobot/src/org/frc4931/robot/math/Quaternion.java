@@ -22,6 +22,8 @@
 
 package org.frc4931.robot.math;
 
+import java.util.Vector;
+
 /**
  * Defines a complex number with three imaginary terms, i, j, and k.
  * <br>Each term has similar properties but are considered to be different numbers. The most important relationship is
@@ -39,6 +41,7 @@ public class Quaternion {
     private final double x;
     private final double y;
     private final double z;
+    private final int hash;
 
     /**
      * Constructs a quaternion with given term coefficients.
@@ -53,6 +56,18 @@ public class Quaternion {
         this.x = x;
         this.y = y;
         this.z = z;
+
+        int hash;
+        long temp;
+        temp = Double.doubleToLongBits(w);
+        hash = (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(x);
+        hash = 31 * hash + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(y);
+        hash = 31 * hash + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(z);
+        hash = 31 * hash + (int) (temp ^ (temp >>> 32));
+        this.hash = hash;
     }
 
     public Quaternion(Quaternion quat) {
@@ -140,7 +155,7 @@ public class Quaternion {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof Quaternion)) return false;
 
         Quaternion that = (Quaternion) o;
 
@@ -153,16 +168,6 @@ public class Quaternion {
 
     @Override
     public int hashCode() {
-        int result;
-        long temp;
-        temp = Double.doubleToLongBits(w);
-        result = (int) (temp ^ (temp >>> 32));
-        temp = Double.doubleToLongBits(x);
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
-        temp = Double.doubleToLongBits(y);
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
-        temp = Double.doubleToLongBits(z);
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
-        return result;
+        return hash;
     }
 }
