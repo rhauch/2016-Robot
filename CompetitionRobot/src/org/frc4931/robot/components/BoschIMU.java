@@ -23,6 +23,7 @@
 package org.frc4931.robot.components;
 
 import edu.wpi.first.wpilibj.I2C;
+import java.util.Random;
 import org.frc4931.robot.math.EulerAngle;
 import org.frc4931.robot.math.Quaternion;
 import org.frc4931.robot.math.Vector3d;
@@ -42,32 +43,39 @@ public class BoschIMU implements IMU, Executable {
 
     public synchronized void execute(long timeInMillis) {
         double dTime;
-            if (lastExecute == -1) {
-                dTime = 0.0;
-            } else {
-                dTime = (timeInMillis - lastExecute) / 1000.0;
-            }
+        if (lastExecute == -1) {
+            dTime = 0.0;
+        } else {
+            dTime = (timeInMillis - lastExecute) / 1000.0;
+        }
         lastExecute = timeInMillis;
 
         byte[] buffer = new byte[20];
         link.read(0x1A, 20, buffer); // EUL, QUA_Data, LIA_Data
+        int[] intBuffer = new int[20];
+        for (int i = 0; i < intBuffer.length; i++) {
+            intBuffer[i] = Byte.toUnsignedInt(buffer[i]);
+        }
 
-        double heading = (buffer[0] + (buffer[1] << 8)) // Read data from buffer
+
+        double heading = (intBuffer[0] | (intBuffer[1] << 8) // Read data from buffer
+                << 16 >> 16) // Fix sign
                 / 16.0; // 1 degree = 16 LSB
-        double roll = (buffer[2] + (buffer[3] << 8)) / 16.0;
-        double pitch = (buffer[4] + (buffer[5] << 8)) / 16.0;
+        double roll = (intBuffer[2] | (intBuffer[3] << 8) << 16 >> 16) / 16.0;
+        double pitch = (intBuffer[4] | (intBuffer[5] << 8) << 16 >> 16) / 16.0;
 
-        double quatW = (buffer[6] + (buffer[7] << 8)) // Read data from buffer
+        double quatW = (intBuffer[6] | (intBuffer[7] << 8) // Read data from buffer
+                << 16 >> 16) // Fix sign
                 / 16384.0; // 1 (no unit) = 2^14 LSB;
-        double quatX = (buffer[8] + (buffer[9] << 8)) / 16384.0;
-        double quatY = (buffer[10] + (buffer[11] << 8)) / 16384.0;
-        double quatZ = (buffer[12] + (buffer[13] << 8)) / 16384.0;
+        double quatX = (intBuffer[8] | (intBuffer[9] << 8) << 16 >> 16) / 16384.0;
+        double quatY = (intBuffer[10] | (intBuffer[11] << 8) << 16 >> 16) / 16384.0;
+        double quatZ = (intBuffer[12] | (intBuffer[13] << 8) << 16 >> 16) / 16384.0;
 
-        double accX = (buffer[14] + (buffer[15] << 8) // Read data from buffer
+        double accX = (intBuffer[14] | (intBuffer[15] << 8) // Read data from buffer
                 << 18 >> 18) // Fix sign for 14 bit numbers
                 / 100.0; // 1 m/s^2 = 100 LSB
-        double accY = (buffer[16] + (buffer[17] << 8) << 18 >> 18) / 100.0;
-        double accZ = (buffer[18] + (buffer[19] << 8) << 18 >> 18) / 100.0;
+        double accY = (intBuffer[16] | (intBuffer[17] << 8) << 18 >> 18) / 100.0;
+        double accZ = (intBuffer[18] | (intBuffer[19] << 8) << 18 >> 18) / 100.0;
 
         EulerAngle euler = new EulerAngle(heading, roll, pitch);
         Quaternion quaternion = new Quaternion(quatW, quatX, quatY, quatZ);
