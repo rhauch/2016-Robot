@@ -22,30 +22,34 @@
 
 package org.frc4931.robot.roller;
 
+import org.frc4931.robot.components.InfraredSensor;
 import org.strongback.command.Requirable;
 import org.strongback.components.Motor;
 
-public class Roller implements Requirable {
-	public static final double MOTOR_SPEED = 1.0;
-
+public class Roller implements Requirable 
+{
+	private final InfraredSensor iA;
+	private final InfraredSensor iB;
 	private final Motor wheels;
 	
-	public Roller(Motor wheels) {
+	public Roller(Motor wheels,InfraredSensor iRSA,InfraredSensor iRSB) {
 		this.wheels = wheels;
+		iA = iRSA;
+		iB=  iRSB;
 	}
 	
 	/*
 	 * Pulls a ball in.
 	 */
 	public void suck() {
-		wheels.setSpeed(-1 * MOTOR_SPEED);
+		wheels.setSpeed(-1.0);
 	}
 	
 	/*
 	 * Pushes a ball out.
 	 */
 	public void spit() {
-		wheels.setSpeed(MOTOR_SPEED);
+		wheels.setSpeed(1.0);
 	}
 	
 	/*
@@ -53,5 +57,12 @@ public class Roller implements Requirable {
 	 */
 	public void stop(){
 		wheels.stop();
+	}
+	
+	/*
+	 * Checks if a ball is in.
+	 */
+	public boolean ballIn() {
+		return iA.getInput() && iB.getInput();
 	}
 }
