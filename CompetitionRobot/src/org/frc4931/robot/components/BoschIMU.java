@@ -26,18 +26,28 @@ import edu.wpi.first.wpilibj.I2C;
 import org.frc4931.robot.math.EulerAngle;
 import org.frc4931.robot.math.Quaternion;
 import org.frc4931.robot.math.Vector3d;
+import org.strongback.Executable;
 
-public class BoschIMU implements IMU {
+public class BoschIMU implements IMU, Executable {
     private final I2C link;
 
     private volatile State state;
+    private volatile long lastExecute;
 
     public BoschIMU(I2C.Port port) {
         link = new I2C(port, 0x28);
         link.write(0x3D, 0x0C); // OPR_MODE = NDOF
+        zero();
     }
 
-    public synchronized void poll() {
+    public synchronized void execute(long timeInMillis) {
+        double dTime;
+            if (lastExecute == -1) {
+                dTime = 0.0;
+            } else {
+                dTime = (timeInMillis - lastExecute) / 1000.0;
+            }
+        lastExecute = timeInMillis;
 
         byte[] buffer = new byte[20];
         link.read(0x1A, 20, buffer); // EUL, QUA_Data, LIA_Data
@@ -59,10 +69,15 @@ public class BoschIMU implements IMU {
         double accY = (buffer[16] + (buffer[17] << 8) << 18 >> 18) / 100.0;
         double accZ = (buffer[18] + (buffer[19] << 8) << 18 >> 18) / 100.0;
 
-        EulerAngle eulerOrientation = new EulerAngle(heading, roll, pitch);
-        Quaternion quaternionOrientation = new Quaternion(quatW, quatX, quatY, quatZ);
-        Vector3d linearAcceleration = new Vector3d(accX, accY, accZ);
-        state = new State(eulerOrientation, quaternionOrientation, linearAcceleration);
+        EulerAngle euler = new EulerAngle(heading, roll, pitch);
+        Quaternion quaternion = new Quaternion(quatW, quatX, quatY, quatZ);
+        Vector3d linAcceleration = new Vector3d(accX, accY, accZ);
+        state = new State(euler, quaternion, linAcceleration, state, dTime);
+    }
+
+    public synchronized void zero() {
+        state = new State(EulerAngle.ZERO, Quaternion.IDENTITY, Vector3d.ZERO);
+        lastExecute = -1;
     }
 
     @Override

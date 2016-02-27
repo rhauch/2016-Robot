@@ -22,7 +22,7 @@
 
 package org.frc4931.robot.drive;
 
-import org.frc4931.robot.components.Locator;
+import org.frc4931.robot.components.IMU;
 import org.strongback.command.Requirable;
 import org.strongback.drive.TankDrive;
 
@@ -35,18 +35,18 @@ import org.strongback.drive.TankDrive;
  */
 public class DriveSystem implements Requirable {
     private final TankDrive drive;
-    private final Locator locator;
+    private final IMU imu;
 
     private boolean directionFlipped;
 
     /**
      * Constructs a new drive system with the default orientation given a pair of drive train motors.
      * @param drive The drive train that will be controlled by the subsystem.
-     * @param locator The locator that will be owned by this drive system.
+     * @param imu The IMU that will be owned by this drive system.
      */
-    public DriveSystem(TankDrive drive, Locator locator) {
+    public DriveSystem(TankDrive drive, IMU imu) {
         this.drive = drive;
-        this.locator = locator;
+        this.imu = imu;
         directionFlipped = false;
     }
 
@@ -70,8 +70,8 @@ public class DriveSystem implements Requirable {
         drive.stop();
     }
 
-    public Locator getLocator() {
-        return locator;
+    public IMU getImu() {
+        return imu;
     }
 
     /**
