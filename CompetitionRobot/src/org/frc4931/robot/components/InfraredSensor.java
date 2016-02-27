@@ -1,12 +1,11 @@
 package org.frc4931.robot.components;
 
-import org.strongback.command.Requirable;
+
 import org.strongback.components.Switch;
-import org.strongback.components.VoltageSensor;
 import org.strongback.hardware.Hardware;
 
 
-public class InfraredSensor implements Requirable
+public class InfraredSensor
 {
 	public Switch v;
 	public InfraredSensor(int portNumber)

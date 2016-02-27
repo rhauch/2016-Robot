@@ -54,8 +54,8 @@ public class Robot extends IterativeRobot {
     private static final int ROLLER_MOTOR_CAN_ID = 0;
     private static final int ARM_MOTOR_CAN_ID = 1;
     private static final double ARM_PULSES_PER_DEGREE = 7.0 * 71.0 / 360.0;
-    private static final int IR_SENSOR_PORT_NUMBER_A=0;
-    private static final int IR_SENSOR_PORT_NUMBER_B=2;
+    private static final int IR_SENSOR_PORT_NUMBER_A=2;
+    private static final int IR_SENSOR_PORT_NUMBER_B=3;
 
     private DriveSystem drive;
     private Arm arm;
@@ -90,7 +90,12 @@ public class Robot extends IterativeRobot {
         arm = new Arm(armMotor);
 
         Motor rollerMotor = Hardware.Motors.talonSRX(ROLLER_MOTOR_CAN_ID);
-        roller = new Roller(rollerMotor);
+        InfraredSensor iSA=new InfraredSensor(IR_SENSOR_PORT_NUMBER_A);
+        InfraredSensor iSB=new InfraredSensor(IR_SENSOR_PORT_NUMBER_B);
+        roller = new Roller(rollerMotor,iSA,iSB);
+
+//        CameraServer.getInstance().setQuality(50);
+//        CameraServer.getInstance().startAutomaticCapture(new USBCamera());
 
         // Define the interface components ...
         FlightStick joystick = Hardware.HumanInterfaceDevices.logitechAttack3D(0);
@@ -101,8 +106,7 @@ public class Robot extends IterativeRobot {
         armDown = joystick.getButton(4);
 		Switch suck = joystick.getButton(3);
         Switch spit = joystick.getButton(5);
-        InfraredSensor iSA=new InfraredSensor(IR_SENSOR_PORT_NUMBER_A);
-        InfraredSensor iSB=new InfraredSensor(IR_SENSOR_PORT_NUMBER_B);
+
         // Register the functions that run when the switches change state ...
         SwitchReactor reactor = Strongback.switchReactor();
 

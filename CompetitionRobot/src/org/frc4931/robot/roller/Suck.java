@@ -1,9 +1,7 @@
 package org.frc4931.robot.roller;
 
-import org.frc4931.robot.components.InfraredSensor;
 import org.strongback.command.Command;
 import org.strongback.components.Switch;
-import org.strongback.components.ui.FlightStick;
 
 
 public class Suck extends Command {
@@ -12,8 +10,8 @@ public class Suck extends Command {
 	
 	public Suck(Roller roller,Switch swtch) {
         super(roller);
+        this.roller=roller;
         shouldContinue=swtch;
-		this.roller = roller;
 	}
 	
 	@Override
