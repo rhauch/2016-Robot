@@ -24,11 +24,16 @@
 package org.frc4931.robot;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import org.frc4931.robot.arm.Arm;
 import org.frc4931.robot.arm.CalibrateArm;
+import org.frc4931.robot.components.InfraredSensor;
 import org.frc4931.robot.drive.DriveSystem;
 import org.frc4931.robot.drive.TimedDrive;
 import org.frc4931.robot.roller.Roller;
+import org.frc4931.robot.roller.Spit;
+import org.frc4931.robot.roller.Suck;
 import org.strongback.Strongback;
 import org.strongback.SwitchReactor;
 import org.strongback.components.Motor;
@@ -49,6 +54,8 @@ public class Robot extends IterativeRobot {
     private static final int ROLLER_MOTOR_CAN_ID = 0;
     private static final int ARM_MOTOR_CAN_ID = 1;
     private static final double ARM_PULSES_PER_DEGREE = 7.0 * 71.0 / 360.0;
+    private static final int IR_SENSOR_PORT_NUMBER_A=2;
+    private static final int IR_SENSOR_PORT_NUMBER_B=3;
 
     private DriveSystem drive;
     private Arm arm;
@@ -57,8 +64,6 @@ public class Robot extends IterativeRobot {
     private ContinuousRange turnSpeed;
     private Switch armUp;
     private Switch armDown;
-    private Switch rollerIn;
-    private Switch rollerOut;
 
     public static final double AUTO_DRIVE_SPEED=1;
     public static final double AUTO_DRIVE_TIME=2;
@@ -85,7 +90,12 @@ public class Robot extends IterativeRobot {
         arm = new Arm(armMotor);
 
         Motor rollerMotor = Hardware.Motors.talonSRX(ROLLER_MOTOR_CAN_ID);
-        roller = new Roller(rollerMotor);
+        InfraredSensor iSA=new InfraredSensor(IR_SENSOR_PORT_NUMBER_A);
+        InfraredSensor iSB=new InfraredSensor(IR_SENSOR_PORT_NUMBER_B);
+        roller = new Roller(rollerMotor,iSA,iSB);
+
+//        CameraServer.getInstance().setQuality(50);
+//        CameraServer.getInstance().startAutomaticCapture(new USBCamera());
 
         // Define the interface components ...
         FlightStick joystick = Hardware.HumanInterfaceDevices.logitechAttack3D(0);
@@ -94,13 +104,15 @@ public class Robot extends IterativeRobot {
         turnSpeed = joystick.getYaw().scale(throttle::read);
         armUp = joystick.getButton(6);
         armDown = joystick.getButton(4);
-		rollerIn = joystick.getButton(3);
-        rollerOut = joystick.getButton(5);
+		Switch suck = joystick.getButton(3);
+        Switch spit = joystick.getButton(5);
 
         // Register the functions that run when the switches change state ...
         SwitchReactor reactor = Strongback.switchReactor();
 
         reactor.onTriggered(joystick.getTrigger(), drive::toggleDirectionFlipped);
+		reactor.onTriggered(suck, ()->Strongback.submit(new Suck(roller,suck)));
+        reactor.onTriggered(spit, ()->Strongback.submit(new Spit(roller,spit)));
 
         // Set up the data recorder to capture the left & right motor speeds and the sensivity.
         // We have to do this before we start Strongback...
@@ -139,13 +151,7 @@ public class Robot extends IterativeRobot {
             arm.lower();
         }
 
-        if (rollerIn.isTriggered() == rollerOut.isTriggered()) {
-            roller.stop();
-        } else if (rollerIn.isTriggered()) {
-            roller.suck();
-        } else if (rollerOut.isTriggered()) {
-            roller.spit();
-        }
+        SmartDashboard.putNumber("Arm Angle", arm.getAngle());
     }
 
     @Override
