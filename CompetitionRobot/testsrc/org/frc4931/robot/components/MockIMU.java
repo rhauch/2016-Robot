@@ -27,40 +27,18 @@ import org.frc4931.robot.math.Quaternion;
 import org.frc4931.robot.math.Vector3d;
 
 public class MockIMU implements IMU {
-    private EulerAngle eulerOrientation;
-    private Quaternion quaternionOrientation;
-    private Vector3d linearAcceleration;
+    private State state;
 
     public MockIMU() {
-        eulerOrientation = EulerAngle.ZERO;
-        quaternionOrientation = Quaternion.IDENTITY;
-        linearAcceleration = Vector3d.ZERO;
+        state = new State(EulerAngle.ZERO, Quaternion.IDENTITY, Vector3d.ZERO);
     }
 
     @Override
-    public EulerAngle getEulerOrientation() {
-        return eulerOrientation;
+    public State getState() {
+        return state;
     }
 
-    public void setEulerOrientation(EulerAngle eulerOrientation) {
-        this.eulerOrientation = eulerOrientation;
-    }
-
-    @Override
-    public Quaternion getQuaternionOrientation() {
-        return quaternionOrientation;
-    }
-
-    public void setQuaternionOrientation(Quaternion quaternionOrientation) {
-        this.quaternionOrientation = quaternionOrientation;
-    }
-
-    @Override
-    public Vector3d getLinearAcceleration() {
-        return linearAcceleration;
-    }
-
-    public void setLinearAcceleration(Vector3d linearAcceleration) {
-        this.linearAcceleration = linearAcceleration;
+    public void setState(State state) {
+        this.state = state;
     }
 }

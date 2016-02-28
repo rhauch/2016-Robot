@@ -22,7 +22,6 @@
 
 package org.frc4931.robot.drive;
 
-import org.frc4931.robot.components.Locator;
 import org.frc4931.robot.components.MockIMU;
 import org.junit.Before;
 import org.junit.Test;
@@ -43,7 +42,7 @@ public class TestDriveSystem {
         leftMotor = Mock.stoppedMotor();
         rightMotor = Mock.stoppedMotor();
         imu = new MockIMU();
-        driveSystem = new DriveSystem(new TankDrive(leftMotor, rightMotor), new Locator(imu));
+        driveSystem = new DriveSystem(new TankDrive(leftMotor, rightMotor), imu);
     }
 
     /**

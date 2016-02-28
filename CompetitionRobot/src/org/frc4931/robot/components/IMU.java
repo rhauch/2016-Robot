@@ -38,12 +38,12 @@ public interface IMU {
 
     @Immutable
     class State {
-        public EulerAngle euler;
-        public Quaternion quaternion;
-        public Vector3d linAcceleration;
-        public Vector3d absAcceleration;
-        public Vector3d absVelocity;
-        public Vector3d absPosition;
+        public final EulerAngle euler;
+        public final Quaternion quaternion;
+        public final Vector3d linAcceleration;
+        public final Vector3d absAcceleration;
+        public final Vector3d absVelocity;
+        public final Vector3d absPosition;
 
         State(EulerAngle euler, Quaternion quaternion, Vector3d linAcceleration) {
             this.euler = euler;
@@ -55,7 +55,10 @@ public interface IMU {
         }
 
         State(EulerAngle euler, Quaternion quaternion, Vector3d linAcceleration, State oldState, double dTime) {
-            this(euler, quaternion, linAcceleration);
+            this.euler = euler;
+            this.quaternion = quaternion;
+            this.linAcceleration = linAcceleration;
+            absAcceleration = linAcceleration.rotate(quaternion.conjugate());
             absVelocity = oldState.absVelocity.add(absAcceleration.mul(dTime));
             absPosition = oldState.absPosition.add(absVelocity.mul(dTime));
         }
