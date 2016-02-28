@@ -22,6 +22,7 @@
 
 package org.frc4931.robot.drive;
 
+import org.frc4931.robot.components.IMU;
 import org.strongback.command.Requirable;
 import org.strongback.drive.TankDrive;
 
@@ -34,15 +35,18 @@ import org.strongback.drive.TankDrive;
  */
 public class DriveSystem implements Requirable {
     private final TankDrive drive;
+    private final IMU imu;
 
     private boolean directionFlipped;
 
     /**
      * Constructs a new drive system with the default orientation given a pair of drive train motors.
      * @param drive The drive train that will be controlled by the subsystem.
+     * @param imu The IMU that will be owned by this drive system.
      */
-    public DriveSystem(TankDrive drive) {
+    public DriveSystem(TankDrive drive, IMU imu) {
         this.drive = drive;
+        this.imu = imu;
         directionFlipped = false;
     }
 
@@ -64,6 +68,10 @@ public class DriveSystem implements Requirable {
      */
     public void stop() {
         drive.stop();
+    }
+
+    public IMU getImu() {
+        return imu;
     }
 
     /**
