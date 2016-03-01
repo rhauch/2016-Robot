@@ -46,7 +46,7 @@ public class TestDriveSystem {
     }
 
     /**
-     * Tests {@link DriveSystem#arcade(double, double)} in its normal direction (speed is not inverted).
+     * Tests {@link DriveSystem#arcade(double, double)}.
      */
     @Test
     public void testArcade() {
@@ -57,31 +57,6 @@ public class TestDriveSystem {
         driveSystem.arcade(-1.0, 0.0);
         assertEquals(-1.0, leftMotor.getSpeed(), 0.0);
         assertEquals(-1.0, rightMotor.getSpeed(), 0.0);
-
-        driveSystem.arcade(0.0, 1.0);
-        assertEquals(-1.0, leftMotor.getSpeed(), 0.0);
-        assertEquals(1.0, rightMotor.getSpeed(), 0.0);
-
-        driveSystem.arcade(0.0, -1.0);
-        assertEquals(1.0, leftMotor.getSpeed(), 0.0);
-        assertEquals(-1.0, rightMotor.getSpeed(), 0.0);
-    }
-
-    /**
-     * Tests {@link DriveSystem#arcade(double, double)} when the direction is flipped.
-     * Drive speed should be inverted, but turn speed should remain unchanged.
-     */
-    @Test
-    public void testFlippedArcade() {
-        driveSystem.setDirectionFlipped(true);
-
-        driveSystem.arcade(1.0, 0.0);
-        assertEquals(-1.0, leftMotor.getSpeed(), 0.0);
-        assertEquals(-1.0, rightMotor.getSpeed(), 0.0);
-
-        driveSystem.arcade(-1.0, 0.0);
-        assertEquals(1.0, leftMotor.getSpeed(), 0.0);
-        assertEquals(1.0, rightMotor.getSpeed(), 0.0);
 
         driveSystem.arcade(0.0, 1.0);
         assertEquals(-1.0, leftMotor.getSpeed(), 0.0);

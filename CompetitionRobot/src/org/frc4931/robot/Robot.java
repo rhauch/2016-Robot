@@ -70,6 +70,7 @@ public class Robot extends IterativeRobot {
     private Roller roller;
     private ContinuousRange driveSpeed;
     private ContinuousRange turnSpeed;
+    private double driveScale = 1.0;
 
     @Override
     public void robotInit() {
@@ -105,7 +106,7 @@ public class Robot extends IterativeRobot {
         // Define the interface components ...
         FlightStick joystick = Hardware.HumanInterfaceDevices.logitechAttack3D(0);
         ContinuousRange throttle = joystick.getThrottle().map(t -> (1.0 - t) / 2);
-        driveSpeed = joystick.getPitch().scale(throttle::read).invert();
+        driveSpeed = joystick.getPitch().scale(throttle::read).scale(() -> driveScale).invert();
         turnSpeed = joystick.getYaw().scale(throttle::read);
         Switch flipDirection = joystick.getTrigger();
         Switch armUp = joystick.getButton(6);
@@ -116,7 +117,7 @@ public class Robot extends IterativeRobot {
         // Register the functions that run when the switches change state ...
         SwitchReactor reactor = Strongback.switchReactor();
 
-        reactor.onTriggered(flipDirection, drive::toggleDirectionFlipped);
+        reactor.onTriggered(flipDirection, () -> driveScale *= -1.0);
 		reactor.onTriggeredSubmit(suck, () -> new SuckWhile(roller, suck));
         reactor.onTriggeredSubmit(spit, () -> new SpitWhile(roller, spit));
         reactor.onTriggeredSubmit(armUp, () -> new RaiseArmWhile(arm, armUp));
