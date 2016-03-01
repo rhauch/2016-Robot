@@ -23,6 +23,7 @@
 package org.frc4931.robot.arm;
 
 import org.strongback.command.Command;
+import org.strongback.control.TalonController;
 
 /**
  * Lowers the arm until the home switch is triggered. After that, the arm is zeroed.`
@@ -36,8 +37,13 @@ public class CalibrateArm extends Command {
     }
 
     @Override
-    public boolean execute() {
+    public void initialize() {
+        arm.setControlMode(TalonController.ControlMode.PERCENT_VBUS);
         arm.lower();
+    }
+
+    @Override
+    public boolean execute() {
         return arm.isAtHome();
     }
 
