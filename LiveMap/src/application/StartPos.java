@@ -3,8 +3,8 @@ package application;
 
 public class StartPos 
 {
-	private double mainX;
-	private double mainY;
+	private double mainX = 0;
+	private double mainY = 0;
 	
 	/**
 	 * 
