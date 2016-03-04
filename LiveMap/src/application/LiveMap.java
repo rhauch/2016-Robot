@@ -2,6 +2,7 @@ package application;
 	
 
 import javafx.scene.input.MouseEvent;
+
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.event.EventHandler;
@@ -12,6 +13,8 @@ import javafx.scene.canvas.Canvas;
 
 public class LiveMap extends Application {
 	private Map map = new Map();
+	
+
 	/** 
 	 * @param x the x-axis of the map
 	 * @param y the y-axis of the map
@@ -44,6 +47,7 @@ public class LiveMap extends Application {
 		});
 		
 		AnimationTimer timer = new AnimationTimer(){
+			
 
 			@Override
 			public void handle(long arg0){
