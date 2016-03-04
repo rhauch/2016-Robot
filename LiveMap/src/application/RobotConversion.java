@@ -43,7 +43,7 @@ public class RobotConversion
 	public int xCoord()
 	{
 		double x = convertPixels(table.getNumber("posY", 0))+ startX;
-		System.out.println(x +" "+ startX);
+		//System.out.println(x +" "+ startX);
 		return (int) x;
 	}
 	
@@ -54,7 +54,7 @@ public class RobotConversion
 	public int yCoord()
 	{
 		double y = convertPixels(table.getNumber("posX", 0))+ startY;
-		System.out.println(y +" "+ startY);
+		//System.out.println(y +" "+ startY);
 		return (int) y;
 	}
 	

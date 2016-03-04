@@ -1,7 +1,9 @@
 package application;
 
+import javafx.event.EventHandler;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.transform.Rotate;
 import static application.MetersToPixels.convertPixels;
 
@@ -17,11 +19,13 @@ public class Map {
 	private BuildObstacles oB;
 	private Side side;
 	private Image imageField = new Image("/application/Field.png",814,400,true,false);
+	private Image imageFieldB = new Image("/application/FieldBlue.png",814,400,true,false);
+	private Image imageFieldR = new Image("/application/FieldRed.png",814,400,true,false);
 	private Image imageBA = new Image("/application/BlueDot.png",39,39,true,false);
 	private Image imageRA = new Image("/application/RedDot.png",39,39,true,false);
 	private Image imageObg = new Image("/application/ObstacleGreenHighlight.png",28,63,true,false);
-	private Image imageRS = new Image("/application/RedSide.png",407,400,true,false);
-	private Image imageBS = new Image("/application/BlueSide.png",407,400,true,false);
+	private Image imageRS = new Image("/application/RedSide2.png",814,200,true,false);
+	private Image imageBS = new Image("/application/BlueSide2.png",814,200,true,false);
 	private Image imageSP = new Image("/application/StartingPosition.png",39,39,true,false);
 	private double sx = 0;
 	private double sy = 0;
@@ -36,7 +40,10 @@ public class Map {
 			int xCord = robot.xCoord();
 			int yCord = robot.yCoord();
 			double rotation = robot.rotation();
-			gc.drawImage(imageField,0,0);
+			if(side.getSide())
+				gc.drawImage(imageFieldB,0,0);
+			else
+				gc.drawImage(imageFieldR, 0, 0);
 			gc.save();
 			rotate(gc, rotation, xCord + imageBA.getWidth() / 2, yCord + imageBA.getHeight() / 2);
 			if(side.getSide())
@@ -48,39 +55,39 @@ public class Map {
 		}
 		else if (flag == false && flag2 == true)
 		{
-			java.awt.Point p = MouseInfo.getPointerInfo().getLocation();
-			if(side.getSide())
-			{
-				gc.drawImage(imageField,0,0);
-				if(flag3)
+			//java.awt.Point p = MouseInfo.getPointerInfo().getLocation();
+			gc.getCanvas().setOnMouseMoved(new EventHandler <MouseEvent>(){
+				public void handle(MouseEvent e)
 				{
-				     oB = new BuildObstacles(side.getSide());
-				     flag3=false;
-  			}
-				p = MouseInfo.getPointerInfo().getLocation();
-				System.out.println(p.getX() +"," +p.getY());
-				sp = new StartPos(convertMeters((int)p.getX()-50),convertMeters((int)p.getY()-50));
-				gc.drawImage(imageSP,p.getX()-50, p.getY()-50,39,39);
+					sp = new StartPos(convertMeters((int)e.getX()-3),convertMeters((int)e.getY()-3));
+				}
+			});
+			if(side.getSide())//Blue is true
+			{
+				gc.drawImage(imageFieldB,0,0);
+//				if(flag3)
+//				{
+//				     oB = new BuildObstacles(side.getSide());
+//				     flag3=false;
+//  			}
+				gc.drawImage(imageSP,convertPixels(sp.getX()),convertPixels(sp.getY()),39,39);
 			}
 			else
 			{
-				gc.drawImage(imageField,0,0);
-				if(flag3)
-				{
-				     oB = new BuildObstacles(side.getSide());
-				     flag3=false;
-				}
-				p = MouseInfo.getPointerInfo().getLocation();
-				System.out.println(p.getX() +"," +p.getY());
-				sp = new StartPos(convertMeters((int)p.getX()-50),convertMeters((int)p.getY()-50));
-				gc.drawImage(imageSP,p.getX()-50,p.getY()-50,39,39);
+				gc.drawImage(imageFieldR,0,0);
+//				if(flag3)
+//				{
+//				     oB = new BuildObstacles(side.getSide());
+//				     flag3=false;
+//				}
+				gc.drawImage(imageSP,convertPixels(sp.getX()),convertPixels(sp.getY()),39,39);
 			}
 		}
 		else
 		{
 			gc.drawImage(imageField,0,0);
-			gc.drawImage(imageBS, 0, 0, 407, 400);
-			gc.drawImage(imageRS, 408, 0, 407, 400);
+			gc.drawImage(imageBS, 0, 0, 814, 200);
+			gc.drawImage(imageRS, 0, 201, 814, 200);
 		}
 	}
 	
@@ -89,7 +96,7 @@ public class Map {
 		int x = xc;
 		int y = yc;
 		if(flag2 == false)
-			side = new Side(x);
+			side = new Side(y);
 		if(side.getSide())
 		{
 			if(flag == false && flag2== true)
@@ -100,7 +107,7 @@ public class Map {
 					{
 						flag = true;
 						robot = new RobotConversion(convertPixels(sp.getX()),convertPixels(sp.getY()));
-						robot.setRotation(-90);
+						robot.setRotation(90);
 						oB.shortestObstacles(oB, robot);
 						//System.out.println((x/PIXELS_PER_METER) +" "+ (y/PIXELS_PER_METER));
 					}
