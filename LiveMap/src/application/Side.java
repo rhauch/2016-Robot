@@ -8,9 +8,9 @@ public class Side
 	 *  chooses the side of the map based on were the user clicks
 	 * @param x the x coord of were you click
 	 */
-	public Side(int x)
+	public Side(int y)
 	{
-		if(x<408)
+		if(y<201)
 		{
 			side = true;
 		}
