@@ -39,7 +39,7 @@ public class CalibrateArm extends Command {
     @Override
     public void initialize() {
         arm.setControlMode(TalonController.ControlMode.PERCENT_VBUS);
-        arm.lower();
+        arm.raise();
     }
 
     @Override

@@ -19,39 +19,29 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.frc4931.robot.arm;
 
-import org.strongback.control.TalonController;
+package org.frc4931.robot.math;
 
-/**
- * This is the command to move the arm to a specified angle
- * 
- * @author Julian Nieto
- */
-public class MoveArmTo extends org.strongback.command.Command {
-    private final Arm arm;
-    private final double targetAngle;
+public class PIDGains {
+    private final double p;
+    private final double i;
+    private final double d;
 
-    /**
-     * Create a command with the desired target angle and default PID gains.
-     *
-     * @param arm arm inputed
-     * @param targetAngle degrees desired
-     */
-    public MoveArmTo(Arm arm, double targetAngle) {
-        super(arm);
-        this.arm = arm;
-        this.targetAngle = targetAngle;
+    public PIDGains(double p, double i, double d) {
+        this.p = p;
+        this.i = i;
+        this.d = d;
     }
 
-    @Override
-    public void initialize() {
-        arm.setControlMode(TalonController.ControlMode.POSITION);
-        arm.setTargetAngle(targetAngle);
+    public double getP() {
+        return p;
     }
 
-    @Override
-    public boolean execute() {
-        return arm.isAtTarget();
+    public double getI() {
+        return i;
+    }
+
+    public double getD() {
+        return d;
     }
 }

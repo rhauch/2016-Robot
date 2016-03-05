@@ -26,12 +26,15 @@ package org.frc4931.robot;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.frc4931.robot.arm.Arm;
+import org.frc4931.robot.arm.CalibrateArm;
 import org.frc4931.robot.arm.LowerArmWhile;
+import org.frc4931.robot.arm.MoveArmTo;
 import org.frc4931.robot.arm.RaiseArmWhile;
-import org.frc4931.robot.components.InfraredSensor;
 import org.frc4931.robot.components.IMU;
+import org.frc4931.robot.components.InfraredSensor;
 import org.frc4931.robot.drive.DriveSystem;
 import org.frc4931.robot.drive.TimedDrive;
+import org.frc4931.robot.math.PIDGains;
 import org.frc4931.robot.roller.Roller;
 import org.frc4931.robot.roller.SpitWhile;
 import org.frc4931.robot.roller.SuckWhile;
@@ -48,14 +51,14 @@ import org.strongback.drive.TankDrive;
 import org.strongback.hardware.Hardware;
 
 public class Robot extends IterativeRobot {
-    private static final String LOG_FILES_DIRECTORY_PATH = "/home/lvuser/";
+    private static final String LOG_FILES_DIRECTORY_PATH = "/home/lvuser/frc4931";
 
     private static final int LEFT_FRONT_MOTOR_PWM_CHANNEL = 2;
     private static final int LEFT_REAR_MOTOR_PWM_CHANNEL = 3;
     private static final int RIGHT_FRONT_MOTOR_PWM_CHANNEL = 0;
     private static final int RIGHT_REAR_MOTOR_PWM_CHANNEL = 1;
-    private static final int IR_SENSOR_A_DIO_CHANNEL =2;
-    private static final int IR_SENSOR_B_DIO_CHANNEL =3;
+    private static final int IR_SENSOR_A_DIO_CHANNEL = 2;
+    private static final int IR_SENSOR_B_DIO_CHANNEL = 3;
     private static final int ROLLER_MOTOR_CAN_ID = 0;
     private static final int ARM_MOTOR_CAN_ID = 1;
     private static final int FORWARD_AIN_CHANNEL = 0;
@@ -63,6 +66,11 @@ public class Robot extends IterativeRobot {
 
     // 7 pulses per rev; 71:1 motor gearing ratio; 28:12 sprocket ratio; 360 degrees per rev
     private static final double ARM_PULSES_PER_DEGREE = 3.2213;
+    public static final double ARM_HOME_ANGLE = 0.0;
+    public static final double ARM_LOW_ANGLE = 190.0;
+    public static final double ARM_HIGH_ANGLE = 130.0;
+    public static final PIDGains ARM_DEFAULT_GAINS = new PIDGains(1.0, 0.0, 0.0); //TODO Tune gains
+    public static final PIDGains ARM_PORTCULLIS_GAINS = new PIDGains(1.0, 0.0, 0.0); //TODO Tune gains
 
 
     public static final double AUTO_DRIVE_SPEED=1;
@@ -97,6 +105,8 @@ public class Robot extends IterativeRobot {
         // Initialize the subsystems ...
         TalonController armMotor = Hardware.Controllers.talonController(ARM_MOTOR_CAN_ID, ARM_PULSES_PER_DEGREE, 0.0);
         armMotor.setFeedbackDevice(TalonSRX.FeedbackDevice.QUADRATURE_ENCODER);
+        armMotor.reverseOutput(true);
+        armMotor.reverseSensor(true);
         arm = new Arm(armMotor);
 
         Motor rollerMotor = Hardware.Motors.talonSRX(ROLLER_MOTOR_CAN_ID);
@@ -117,6 +127,8 @@ public class Robot extends IterativeRobot {
         Switch armDown = joystick.getButton(4);
 		Switch suck = joystick.getButton(3);
         Switch spit = joystick.getButton(5);
+        Switch armLow = joystick.getButton(7);
+        Switch armHigh = joystick.getButton(8);
 
         // Register the functions that run when the switches change state ...
         SwitchReactor reactor = Strongback.switchReactor();
@@ -126,13 +138,25 @@ public class Robot extends IterativeRobot {
         reactor.onTriggeredSubmit(spit, () -> new SpitWhile(roller, spit));
         reactor.onTriggeredSubmit(armUp, () -> new RaiseArmWhile(arm, armUp));
         reactor.onTriggeredSubmit(armDown, () -> new LowerArmWhile(arm, armDown));
+        reactor.onTriggeredSubmit(joystick.getThumb(), () -> new CalibrateArm(arm));
+        reactor.onTriggeredSubmit(armLow, () -> new MoveArmTo(arm, ARM_LOW_ANGLE));
+        reactor.onTriggeredSubmit(armHigh, () -> new MoveArmTo(arm, ARM_HIGH_ANGLE));
+
+        reactor.onTriggeredSubmit(joystick.getButton(12), () -> new MoveArmTo(arm, SmartDashboard.getNumber("New Target")));
+
 
         // Set up the data recorder to capture the left & right motor speeds and the sensivity.
         // We have to do this before we start Strongback...
-//        Strongback.dataRecorder()
-//                  .register("Left motors", leftMotors)
-//                  .register("Right motors", rightMotors)
-//                  .register("Sensitivity", throttle.scaleAsInt(1000));
+       Strongback.dataRecorder()
+//                 .register("Left motors", leftMotors)
+//                 .register("Right motors", rightMotors)
+//                 .register("Sensitivity", throttle.scaleAsInt(1000))
+                 .register("Arm Angle", ()-> (int)(100*arm.getCurrentAngle()));
+
+        SmartDashboard.putNumber("Kp", 1.0);
+        SmartDashboard.putNumber("Ki", 0.0);
+        SmartDashboard.putNumber("Kd", 0.0);
+        SmartDashboard.putNumber("New Target", 90.0);
     }
 
     @Override
@@ -150,13 +174,23 @@ public class Robot extends IterativeRobot {
     public void teleopInit() {
         // Kill anything running, and start it ...
         Strongback.restart();
+        Strongback.submit(new CalibrateArm(arm));
     }
 
     @Override
     public void teleopPeriodic() {
         drive.arcade(driveSpeed.read(), turnSpeed.read());
 
-        SmartDashboard.putNumber("Arm Angle", arm.getAngle());
+        SmartDashboard.putNumber("Arm Angle", arm.getCurrentAngle());
+        SmartDashboard.putNumber("Arm Target", arm.getTargetAngle());
+        SmartDashboard.putBoolean("Arm At Home", arm.isAtHome());
+        SmartDashboard.putNumber("Error", arm.getCurrentAngle() - arm.getTargetAngle());
+
+        arm.setGains(
+                SmartDashboard.getNumber("Kp"),
+                SmartDashboard.getNumber("Ki"),
+                SmartDashboard.getNumber("Kd")
+        );
         double forwardDistance = drive.getForwardProximity().getDistanceInInches();
         SmartDashboard.putNumber("Forward Distance", forwardDistance);
         SmartDashboard.putBoolean("Distance < 12in", forwardDistance < 12.0);

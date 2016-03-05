@@ -22,6 +22,7 @@
 
 package org.frc4931.robot.arm;
 
+import org.frc4931.robot.math.PIDGains;
 import org.strongback.command.Requirable;
 import org.strongback.components.AngleSensor;
 import org.strongback.components.Switch;
@@ -33,7 +34,7 @@ import org.strongback.control.TalonController;
  * It is used to traverse tall defenses and open gates.
  */
 public class Arm implements Requirable {
-    public static final double MOTOR_SPEED = 1.0;
+    public static final double MOTOR_SPEED = 0.8;
 
     private final TalonController controller;
     private final AngleSensor angleSensor;
@@ -47,7 +48,7 @@ public class Arm implements Requirable {
         this.controller = controller;
         angleSensor = controller.getSelectedSensor();
         //FIXME Strongback assigns reverse limit switch to forward
-        homeSwitch = controller.getForwardLimitSwitch();
+        homeSwitch = controller.getReverseLimitSwitch();
     }
 
     /**
@@ -75,11 +76,15 @@ public class Arm implements Requirable {
 
     /**
      * Gets the current angle relative to its zero angle.
-     * Positive angles are relatively higher, whereas negative angles are relatively lower.
+     * Positive angles are relatively lower, whereas negative angles are relatively higher.
      * @return The angle of the arm.
      */
-    public double getAngle() {
+    public double getCurrentAngle() {
         return angleSensor.getAngle();
+    }
+
+    public double getTargetAngle() {
+        return controller.getTarget();
     }
 
     /**
@@ -94,8 +99,12 @@ public class Arm implements Requirable {
         return controller.isWithinTolerance();
     }
 
-    public boolean isAtHome() {
-        return homeSwitch.isTriggered();
+    public void setGains(PIDGains gains) {
+        setGains(gains.getP(), gains.getI(), gains.getD());
+    }
+
+    public void setGains(double p, double i, double d) {
+        controller.withGains(p, i, d);
     }
 
     public void raise() {
@@ -108,5 +117,9 @@ public class Arm implements Requirable {
 
     public void stop() {
         controller.stop();
+    }
+
+    public boolean isAtHome() {
+        return homeSwitch.isTriggered();
     }
 }
