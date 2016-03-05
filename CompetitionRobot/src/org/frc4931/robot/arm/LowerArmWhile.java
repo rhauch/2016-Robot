@@ -19,39 +19,36 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+
 package org.frc4931.robot.arm;
 
+import org.strongback.command.Command;
+import org.strongback.components.Switch;
 import org.strongback.control.TalonController;
 
-/**
- * This is the command to move the arm to a specified angle
- * 
- * @author Julian Nieto
- */
-public class MoveArmTo extends org.strongback.command.Command {
+public class LowerArmWhile extends Command {
     private final Arm arm;
-    private final double targetAngle;
+    private final Switch shouldContinue;
 
-    /**
-     * Create a command with the desired target angle.
-     *
-     * @param arm arm inputed
-     * @param targetAngle degrees desired
-     */
-    public MoveArmTo(Arm arm, double targetAngle) {
+    public LowerArmWhile(Arm arm, Switch shouldContinue) {
         super(arm);
         this.arm = arm;
-        this.targetAngle = targetAngle;
+        this.shouldContinue = shouldContinue;
     }
 
     @Override
     public void initialize() {
-        arm.setControlMode(TalonController.ControlMode.POSITION);
-        arm.setTargetAngle(targetAngle);
+        arm.setControlMode(TalonController.ControlMode.PERCENT_VBUS);
+        arm.lower();
     }
 
     @Override
     public boolean execute() {
-        return arm.isAtTarget();
+        return !shouldContinue.isTriggered();
+    }
+
+    @Override
+    public void end() {
+        arm.stop();
     }
 }

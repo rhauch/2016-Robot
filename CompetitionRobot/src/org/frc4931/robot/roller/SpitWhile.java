@@ -3,22 +3,28 @@ package org.frc4931.robot.roller;
 import org.strongback.command.Command;
 import org.strongback.components.Switch;
 
+public class SpitWhile extends Command {
 
-public class Suck extends Command {
 	private final Roller roller;
 	private final Switch shouldContinue;
 	
-	public Suck(Roller roller,Switch swtch) {
+	public SpitWhile(Roller roller, Switch swtch) {
         super(roller);
-        this.roller=roller;
-        shouldContinue=swtch;
+        shouldContinue = swtch;
+        this.roller = roller;
 	}
 	
 	@Override
 	public boolean execute() {
-		roller.suck();
-		return !shouldContinue.isTriggered()|| roller.ballIn();
+		//made by Jacob
+		roller.spit();
+		return !shouldContinue.isTriggered();
 	}
+
+    @Override
+    public void interrupted() {
+        roller.stop();
+    }
 
     @Override
     public void end() {

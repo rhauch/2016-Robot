@@ -24,9 +24,9 @@ package org.frc4931.robot.arm;
 
 import org.strongback.command.Requirable;
 import org.strongback.components.AngleSensor;
-import org.strongback.components.Motor;
 import org.strongback.components.Switch;
-import org.strongback.components.TalonSRX;
+import org.strongback.components.TalonSRX.FeedbackDevice;
+import org.strongback.control.TalonController;
 
 /**
  * The Arm is a subsystem of the robot that can be used to raise and lower to specific angles.
@@ -35,51 +35,42 @@ import org.strongback.components.TalonSRX;
 public class Arm implements Requirable {
     public static final double MOTOR_SPEED = 1.0;
 
-    private final Motor motor;
+    private final TalonController controller;
     private final AngleSensor angleSensor;
     private final Switch homeSwitch;
 
     /**
-     * Constructs a new Arm subsystem given a motor, an angle sensor, and a home switch.
-     * @param motor The motor to control the arm. Positive speeds should raise the arm; negative should lower it.
-     * @param angleSensor The angle sensor that provides the angle of the arm.
-     * @param homeSwitch The switch that should trigger when the arm is in its home position.
+     * Constructs a new Arm subsystem given a Talon SRX motor controller.
+     * @param controller The Talon SRX that is responsible for controlling the arm.
      */
-    public Arm(Motor motor, AngleSensor angleSensor, Switch homeSwitch) {
-        this.motor = motor;
-        this.angleSensor = angleSensor;
-        this.homeSwitch = homeSwitch;
+    public Arm(TalonController controller) {
+        this.controller = controller;
+        angleSensor = controller.getSelectedSensor();
+        //FIXME Strongback assigns reverse limit switch to forward
+        homeSwitch = controller.getForwardLimitSwitch();
     }
 
     /**
-     * Constructs an Arm that uses the sensors provided by a Talon SRX motor controller.
-     * @param controller The Talon SRX controller to pull
+     * Get this controller's current control mode.
+     *
+     * @return the control mode; never null
      */
-    public Arm(TalonSRX controller) {
-        //FIXME Strongback assigns reverse limit switch to forward?
-        this(controller, controller.getEncoderInput(), controller.getForwardLimitSwitch());
-        controller.enableLimitSwitch(true, true);
+    public TalonController.ControlMode getControlMode() {
+        return controller.getControlMode();
     }
 
     /**
-     * Raises the arm, which increases the current angle.
+     * Set the control mode for this controller.
+     *
+     * @param mode the control mode; may not be null
+     * @return this object so that methods can be chained; never null
      */
-    public void raise() {
-        motor.setSpeed(MOTOR_SPEED);
+    public TalonController setControlMode(TalonController.ControlMode mode) {
+        return controller.setControlMode(mode);
     }
 
-    /**
-     * Lowers the arm, which decreases the current angle.
-     */
-    public void lower() {
-        motor.setSpeed(-1 * MOTOR_SPEED);
-    }
-
-    /**
-     * Stops rotation of the arm, which stops the change in current angle.
-     */
-    public void stop() {
-        motor.stop();
+    public void zero() {
+        angleSensor.zero();
     }
 
     /**
@@ -92,18 +83,30 @@ public class Arm implements Requirable {
     }
 
     /**
-     * Sets the zero angle of the arm to its current angle.
-     * Any subsequent calls to {@link #getAngle()} will be relative to its new zero angle.
+     * Set the target angle of the arm's PID loop.
+     * @param targetAngle The new target angle that the arm should move to.
      */
-    public void zero() {
-        angleSensor.zero();
+    public void setTargetAngle(double targetAngle) {
+        controller.withTarget(targetAngle);
     }
 
-    /**
-     * Determines whether the arm is at its home position.
-     * @return true if the home switch has been triggered, indicating the arm is at home.
-     */
+    public boolean isAtTarget() {
+        return controller.isWithinTolerance();
+    }
+
     public boolean isAtHome() {
         return homeSwitch.isTriggered();
+    }
+
+    public void raise() {
+        controller.setSpeed(MOTOR_SPEED);
+    }
+
+    public void lower() {
+        controller.setSpeed(-MOTOR_SPEED);
+    }
+
+    public void stop() {
+        controller.stop();
     }
 }
