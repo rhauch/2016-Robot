@@ -2,20 +2,17 @@ package application;
 
 import javafx.event.EventHandler;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.RadioButton;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.transform.Rotate;
 import static application.MetersToPixels.convertPixels;
 
-import Obstacles.BuildObstacles;
 
 import static application.MetersToPixels.convertMeters;
 
 public class Map {
 	private RobotConversion robot;
 	private StartPos sp;
-	private BuildObstacles oB;
 	private Side side;
 	private Image imageField = new Image("/application/Field.png",814,400,true,false);
 	private Image imageFieldB = new Image("/application/FieldBlue.png",814,400,true,false);
@@ -29,13 +26,12 @@ public class Map {
 	private Image imageUndo = new Image("/application/undoButton.png",60,20,true,false);
 	private double sx = 0;
 	private double sy = 0;
-	private boolean flag = false;
-	private boolean flag2 = false;
-	private boolean flag3 = true;
+	private boolean robotIsOnField = false;
+	private boolean sideHasBeenPicked = false;
 
 	public void update(GraphicsContext gc)
 	{
-		if(flag == true && flag2 == true)
+		if(robotIsOnField == true && sideHasBeenPicked == true)
 		{
 			int xCord = robot.xCoord();
 			int yCord = robot.yCoord();
@@ -51,13 +47,11 @@ public class Map {
 			else
 			gc.drawImage(imageRA, xCord, yCord, 39, 39);
 			gc.restore();
-			gc.drawImage(imageObg, 255, 337, 28, 63);//add an undo button simple
+			gc.drawImage(imageObg, 255, 337, 28, 63);
 			gc.drawImage(imageUndo,0,0,60,20);
-			//have julian help with that
 		}
-		else if (flag == false && flag2 == true)
+		else if (robotIsOnField == false && sideHasBeenPicked == true)
 		{
-			//java.awt.Point p = MouseInfo.getPointerInfo().getLocation();
 			gc.getCanvas().setOnMouseMoved(new EventHandler <MouseEvent>(){
 				public void handle(MouseEvent e)
 				{
@@ -67,21 +61,11 @@ public class Map {
 			if(side.getSide())//Blue is true
 			{
 				gc.drawImage(imageFieldB,0,0);
-//				if(flag3)
-//				{
-//				     oB = new BuildObstacles(side.getSide());
-//				     flag3=false;
-//  			}
 				gc.drawImage(imageSP,convertPixels(sp.getX()),convertPixels(sp.getY()),39,39);
 			}
 			else
 			{
 				gc.drawImage(imageFieldR,0,0);
-//				if(flag3)
-//				{
-//				     oB = new BuildObstacles(side.getSide());
-//				     flag3=false;
-//				}
 				gc.drawImage(imageSP,convertPixels(sp.getX()),convertPixels(sp.getY()),39,39);
 			}
 		}
@@ -97,36 +81,35 @@ public class Map {
 	{
 		int x = xc;
 		int y = yc;
-		if(flag2 == false)
+		if(sideHasBeenPicked == false)
 			side = new Side(y);
 		if(side.getSide())
 		{
-			if(flag == false && flag2== true)
+			if(robotIsOnField == false && sideHasBeenPicked== true)
 			{
 				sx = (double) (convertMeters(x));
 				sy = (double) (convertMeters(y));
 					if(sp.withinBoundries(sx, sy))
 					{
-						flag = true;
+						robotIsOnField = true;
 						robot = new RobotConversion(convertPixels(sp.getX()),convertPixels(sp.getY()));
 						robot.setRotation(90);
-						//oB.shortestObstacles(oB, robot);
 						//System.out.println((x/PIXELS_PER_METER) +" "+ (y/PIXELS_PER_METER));
 					}
 			}
 			else
 				System.out.println((convertMeters(x)) +" "+ (convertMeters(y)));
-			flag2 = true;
+			sideHasBeenPicked = true;
 		}
 		else
 		{
-			if(flag == false && flag2==true)
+			if(robotIsOnField == false && sideHasBeenPicked==true)
 			{
 				sx = (double) (convertMeters(x));
 				sy = (double) (convertMeters(y));
 					if(sp.withinBoundries(sx, sy))
 					{
-						flag = true;
+						robotIsOnField = true;
 						robot = new RobotConversion(convertPixels(sp.getX()),convertPixels(sp.getY()));
 						robot.setRotation(90);
 						//System.out.println((x/PIXELS_PER_METER) +" "+ (y/PIXELS_PER_METER));
@@ -134,13 +117,13 @@ public class Map {
 			}
 			else
 				System.out.println((convertMeters(x)) +" "+ (convertMeters(y)));
-			flag2 = true;
+			sideHasBeenPicked = true;
 		}
-		if(flag == true)
+		if(robotIsOnField == true)
 		{
 			if(x<=60 && y<=20)
 			{
-				flag = false;
+				robotIsOnField = false;
 			}
 		}
 	}
