@@ -2,12 +2,11 @@ package application;
 
 import javafx.event.EventHandler;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.RadioButton;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.transform.Rotate;
 import static application.MetersToPixels.convertPixels;
-
-import java.awt.MouseInfo;
 
 import Obstacles.BuildObstacles;
 
@@ -27,6 +26,7 @@ public class Map {
 	private Image imageRS = new Image("/application/RedSide2.png",814,200,true,false);
 	private Image imageBS = new Image("/application/BlueSide2.png",814,200,true,false);
 	private Image imageSP = new Image("/application/StartingPosition.png",39,39,true,false);
+	private Image imageUndo = new Image("/application/undoButton.png",60,20,true,false);
 	private double sx = 0;
 	private double sy = 0;
 	private boolean flag = false;
@@ -51,7 +51,9 @@ public class Map {
 			else
 			gc.drawImage(imageRA, xCord, yCord, 39, 39);
 			gc.restore();
-			gc.drawImage(imageObg, 255, 337, 28, 63);
+			gc.drawImage(imageObg, 255, 337, 28, 63);//add an undo button simple
+			gc.drawImage(imageUndo,0,0,60,20);
+			//have julian help with that
 		}
 		else if (flag == false && flag2 == true)
 		{
@@ -108,7 +110,7 @@ public class Map {
 						flag = true;
 						robot = new RobotConversion(convertPixels(sp.getX()),convertPixels(sp.getY()));
 						robot.setRotation(90);
-						oB.shortestObstacles(oB, robot);
+						//oB.shortestObstacles(oB, robot);
 						//System.out.println((x/PIXELS_PER_METER) +" "+ (y/PIXELS_PER_METER));
 					}
 			}
@@ -133,6 +135,13 @@ public class Map {
 			else
 				System.out.println((convertMeters(x)) +" "+ (convertMeters(y)));
 			flag2 = true;
+		}
+		if(flag == true)
+		{
+			if(x<=60 && y<=20)
+			{
+				flag = false;
+			}
 		}
 	}
 	
