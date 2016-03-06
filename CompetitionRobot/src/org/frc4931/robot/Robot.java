@@ -69,8 +69,7 @@ public class Robot extends IterativeRobot {
     public static final double ARM_HOME_ANGLE = 0.0;
     public static final double ARM_LOW_ANGLE = 190.0;
     public static final double ARM_HIGH_ANGLE = 130.0;
-    public static final PIDGains ARM_DEFAULT_GAINS = new PIDGains(1.0, 0.0, 0.0); //TODO Tune gains
-    public static final PIDGains ARM_PORTCULLIS_GAINS = new PIDGains(1.0, 0.0, 0.0); //TODO Tune gains
+    public static final PIDGains ARM_DEFAULT_GAINS = new PIDGains(47.4, 0.015, 0.0);
 
 
     public static final double AUTO_DRIVE_SPEED=1;
@@ -109,9 +108,11 @@ public class Robot extends IterativeRobot {
         armMotor.reverseSensor(true);
 //        armMotor.setForwardSoftLimit(0);
 //        armMotor.setReverseSoftLimit(205);
-        armMotor.setForwardSoftLimit(40);
-        armMotor.setReverseSoftLimit(120);
+//        armMotor.setForwardSoftLimit(-120);
+//        armMotor.setReverseSoftLimit(-40);
         arm = new Arm(armMotor);
+        arm.setGains(ARM_DEFAULT_GAINS);
+        arm.setSoftLimitsEnabled(false);
 
         Motor rollerMotor = Hardware.Motors.talonSRX(ROLLER_MOTOR_CAN_ID);
         InfraredSensor iSA=new InfraredSensor(IR_SENSOR_A_DIO_CHANNEL);
@@ -189,12 +190,13 @@ public class Robot extends IterativeRobot {
         SmartDashboard.putNumber("Arm Target", arm.getTargetAngle());
         SmartDashboard.putBoolean("Arm At Home", arm.isAtHome());
         SmartDashboard.putNumber("Error", arm.getCurrentAngle() - arm.getTargetAngle());
+//
+//        arm.setGains(
+//                SmartDashboard.getNumber("Kp"),
+//                SmartDashboard.getNumber("Ki"),
+//                SmartDashboard.getNumber("Kd")
+//        );
 
-        arm.setGains(
-                SmartDashboard.getNumber("Kp"),
-                SmartDashboard.getNumber("Ki"),
-                SmartDashboard.getNumber("Kd")
-        );
         double forwardDistance = drive.getForwardProximity().getDistanceInInches();
         SmartDashboard.putNumber("Forward Distance", forwardDistance);
         SmartDashboard.putBoolean("Distance < 12in", forwardDistance < 12.0);
