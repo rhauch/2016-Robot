@@ -37,6 +37,7 @@ import org.frc4931.robot.roller.SpitWhile;
 import org.frc4931.robot.roller.SuckWhile;
 import org.strongback.Strongback;
 import org.strongback.SwitchReactor;
+import org.strongback.components.DistanceSensor;
 import org.strongback.components.Motor;
 import org.strongback.components.Switch;
 import org.strongback.components.TalonSRX;
@@ -57,6 +58,8 @@ public class Robot extends IterativeRobot {
     private static final int IR_SENSOR_B_DIO_CHANNEL =3;
     private static final int ROLLER_MOTOR_CAN_ID = 0;
     private static final int ARM_MOTOR_CAN_ID = 1;
+    private static final int FORWARD_AIN_CHANNEL = 0;
+    private static final double FORWARD_INCHES_PER_VOLT = 102.4;
 
     // 7 pulses per rev; 71:1 motor gearing ratio; 28:12 sprocket ratio; 360 degrees per rev
     private static final double ARM_PULSES_PER_DEGREE = 3.2213;
@@ -88,7 +91,8 @@ public class Robot extends IterativeRobot {
         Motor rightMotors = Motor.compose(rightFrontMotor, rightRearMotor).invert();
         TankDrive tankDrive = new TankDrive(leftMotors, rightMotors);
         IMU imu = IMU.stationary();
-        drive = new DriveSystem(tankDrive, imu);
+        DistanceSensor forward = Hardware.DistanceSensors.analogUltrasonic(FORWARD_AIN_CHANNEL, FORWARD_INCHES_PER_VOLT);
+        drive = new DriveSystem(tankDrive, imu, forward);
 
         // Initialize the subsystems ...
         TalonController armMotor = Hardware.Controllers.talonController(ARM_MOTOR_CAN_ID, ARM_PULSES_PER_DEGREE, 0.0);
@@ -153,6 +157,9 @@ public class Robot extends IterativeRobot {
         drive.arcade(driveSpeed.read(), turnSpeed.read());
 
         SmartDashboard.putNumber("Arm Angle", arm.getAngle());
+        double forwardDistance = drive.getForwardProximity().getDistanceInInches();
+        SmartDashboard.putNumber("Forward Distance", forwardDistance);
+        SmartDashboard.putBoolean("Distance < 12in", forwardDistance < 12.0);
     }
 
     @Override

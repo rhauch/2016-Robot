@@ -24,6 +24,7 @@ package org.frc4931.robot.drive;
 
 import org.frc4931.robot.components.IMU;
 import org.strongback.command.Requirable;
+import org.strongback.components.DistanceSensor;
 import org.strongback.drive.TankDrive;
 
 /**
@@ -32,15 +33,18 @@ import org.strongback.drive.TankDrive;
 public class DriveSystem implements Requirable {
     private final TankDrive drive;
     private final IMU imu;
+    private final DistanceSensor forwardProximity;
 
     /**
      * Constructs a new drive system given a TankDrive it should control.
      * @param drive The drive train that will be controlled by the subsystem.
      * @param imu The IMU that will be owned by this drive system.
+     * @param forwardProximity The distance sensor that measures the proximity to objects in front of the robot.
      */
-    public DriveSystem(TankDrive drive, IMU imu) {
+    public DriveSystem(TankDrive drive, IMU imu, DistanceSensor forwardProximity) {
         this.drive = drive;
         this.imu = imu;
+        this.forwardProximity = forwardProximity;
     }
 
     /**
@@ -61,5 +65,9 @@ public class DriveSystem implements Requirable {
 
     public IMU getImu() {
         return imu;
+    }
+
+    public DistanceSensor getForwardProximity() {
+        return forwardProximity;
     }
 }
