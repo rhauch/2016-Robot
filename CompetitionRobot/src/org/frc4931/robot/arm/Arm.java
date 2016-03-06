@@ -122,4 +122,9 @@ public class Arm implements Requirable {
     public boolean isAtHome() {
         return homeSwitch.isTriggered();
     }
+
+    public void setSoftLimitsEnabled(boolean enabled) {
+        controller.enableForwardSoftLimit(enabled);
+        controller.enableReverseSoftLimit(enabled);
+    }
 }

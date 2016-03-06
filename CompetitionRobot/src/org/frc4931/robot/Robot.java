@@ -107,6 +107,10 @@ public class Robot extends IterativeRobot {
         armMotor.setFeedbackDevice(TalonSRX.FeedbackDevice.QUADRATURE_ENCODER);
         armMotor.reverseOutput(true);
         armMotor.reverseSensor(true);
+//        armMotor.setForwardSoftLimit(0);
+//        armMotor.setReverseSoftLimit(205);
+        armMotor.setForwardSoftLimit(40);
+        armMotor.setReverseSoftLimit(120);
         arm = new Arm(armMotor);
 
         Motor rollerMotor = Hardware.Motors.talonSRX(ROLLER_MOTOR_CAN_ID);

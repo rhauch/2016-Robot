@@ -38,6 +38,7 @@ public class CalibrateArm extends Command {
 
     @Override
     public void initialize() {
+        arm.setSoftLimitsEnabled(false);
         arm.setControlMode(TalonController.ControlMode.PERCENT_VBUS);
         arm.raise();
     }
@@ -52,5 +53,6 @@ public class CalibrateArm extends Command {
         arm.stop();
         pause(1.0);
         arm.zero();
+        arm.setSoftLimitsEnabled(true);
     }
 }
