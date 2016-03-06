@@ -96,9 +96,9 @@ public class Robot extends IterativeRobot {
         arm = new Arm(armMotor);
 
         Motor rollerMotor = Hardware.Motors.talonSRX(ROLLER_MOTOR_CAN_ID);
-        InfraredSensor iSA=new InfraredSensor(IR_SENSOR_A_DIO_CHANNEL);
-        InfraredSensor iSB=new InfraredSensor(IR_SENSOR_B_DIO_CHANNEL);
-        roller = new Roller(rollerMotor,iSA,iSB);
+        InfraredSensor iSA = new InfraredSensor(IR_SENSOR_A_DIO_CHANNEL);
+        InfraredSensor iSB = new InfraredSensor(IR_SENSOR_B_DIO_CHANNEL);
+        roller = new Roller(rollerMotor, () -> iSA.getInput() && iSB.getInput());
 
 //        CameraServer.getInstance().setQuality(50);
 //        CameraServer.getInstance().startAutomaticCapture(new USBCamera());
