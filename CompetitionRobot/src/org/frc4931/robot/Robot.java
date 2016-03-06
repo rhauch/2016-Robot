@@ -123,17 +123,22 @@ public class Robot extends IterativeRobot {
 //        CameraServer.getInstance().startAutomaticCapture(new USBCamera());
 
         // Define the interface components ...
-        FlightStick joystick = Hardware.HumanInterfaceDevices.logitechAttack3D(0);
-        ContinuousRange throttle = joystick.getThrottle().map(t -> (1.0 - t) / 2);
-        driveSpeed = joystick.getPitch().scale(throttle::read).scale(() -> driveScale).invert();
-        turnSpeed = joystick.getYaw().scale(throttle::read);
-        Switch flipDirection = joystick.getTrigger();
-        Switch armUp = joystick.getButton(6);
-        Switch armDown = joystick.getButton(4);
-		Switch suck = joystick.getButton(3);
-        Switch spit = joystick.getButton(5);
-        Switch armLow = joystick.getButton(7);
-        Switch armHigh = joystick.getButton(8);
+        FlightStick driverJoystick = Hardware.HumanInterfaceDevices.logitechAttack3D(0);
+        ContinuousRange throttle = driverJoystick.getThrottle().map(t -> (1.0 - t) / 2);
+        driveSpeed = driverJoystick.getPitch().scale(throttle::read).scale(() -> driveScale).invert();
+        turnSpeed = driverJoystick.getYaw().scale(throttle::read);
+        Switch flipDirection = driverJoystick.getTrigger();
+        Switch armUp = driverJoystick.getButton(6);
+        Switch armDown = driverJoystick.getButton(4);
+		Switch suck = driverJoystick.getButton(3);
+        Switch spit = driverJoystick.getButton(5);
+
+        FlightStick coDriverJoystick = Hardware.HumanInterfaceDevices.logitechAttack3D(1);
+        Switch armUpB = coDriverJoystick.getButton(3);
+        Switch armDownB = coDriverJoystick.getButton(2);
+        Switch armLow = coDriverJoystick.getButton(7);
+        Switch armHigh = coDriverJoystick.getButton(6);
+        Switch raisePortcullis = coDriverJoystick.getButton(12); // If other PID constants are needed
 
         // Register the functions that run when the switches change state ...
         SwitchReactor reactor = Strongback.switchReactor();
@@ -143,11 +148,14 @@ public class Robot extends IterativeRobot {
         reactor.onTriggeredSubmit(spit, () -> new SpitWhile(roller, spit));
         reactor.onTriggeredSubmit(armUp, () -> new RaiseArmWhile(arm, armUp));
         reactor.onTriggeredSubmit(armDown, () -> new LowerArmWhile(arm, armDown));
-        reactor.onTriggeredSubmit(joystick.getThumb(), () -> new CalibrateArm(arm));
+        reactor.onTriggeredSubmit(driverJoystick.getThumb(), () -> new CalibrateArm(arm));
+
+        reactor.onTriggeredSubmit(armUpB, () -> new RaiseArmWhile(arm, armUpB));
+        reactor.onTriggeredSubmit(armDownB, () -> new LowerArmWhile(arm, armDownB));
         reactor.onTriggeredSubmit(armLow, () -> new MoveArmTo(arm, ARM_LOW_ANGLE));
         reactor.onTriggeredSubmit(armHigh, () -> new MoveArmTo(arm, ARM_HIGH_ANGLE));
 
-        reactor.onTriggeredSubmit(joystick.getButton(12), () -> new MoveArmTo(arm, SmartDashboard.getNumber("New Target")));
+        reactor.onTriggeredSubmit(driverJoystick.getButton(12), () -> new MoveArmTo(arm, SmartDashboard.getNumber("New Target")));
 
 
         // Set up the data recorder to capture the left & right motor speeds and the sensivity.
