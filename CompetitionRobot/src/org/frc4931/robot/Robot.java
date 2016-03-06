@@ -71,7 +71,6 @@ public class Robot extends IterativeRobot {
     public static final double ARM_HIGH_ANGLE = 130.0;
     public static final PIDGains ARM_DEFAULT_GAINS = new PIDGains(47.4, 0.015, 0.0);
 
-
     public static final double AUTO_DRIVE_SPEED=1;
     public static final double AUTO_DRIVE_TIME=2;
 
@@ -155,21 +154,13 @@ public class Robot extends IterativeRobot {
         reactor.onTriggeredSubmit(armLow, () -> new MoveArmTo(arm, ARM_LOW_ANGLE));
         reactor.onTriggeredSubmit(armHigh, () -> new MoveArmTo(arm, ARM_HIGH_ANGLE));
 
-        reactor.onTriggeredSubmit(driverJoystick.getButton(12), () -> new MoveArmTo(arm, SmartDashboard.getNumber("New Target")));
-
-
         // Set up the data recorder to capture the left & right motor speeds and the sensivity.
         // We have to do this before we start Strongback...
-       Strongback.dataRecorder()
+//       Strongback.dataRecorder()
 //                 .register("Left motors", leftMotors)
 //                 .register("Right motors", rightMotors)
 //                 .register("Sensitivity", throttle.scaleAsInt(1000))
-                 .register("Arm Angle", ()-> (int)(100*arm.getCurrentAngle()));
-
-        SmartDashboard.putNumber("Kp", 1.0);
-        SmartDashboard.putNumber("Ki", 0.0);
-        SmartDashboard.putNumber("Kd", 0.0);
-        SmartDashboard.putNumber("New Target", 90.0);
+//                 .register("Arm Angle", ()-> (int)(100*arm.getCurrentAngle()));
     }
 
     @Override
@@ -197,13 +188,6 @@ public class Robot extends IterativeRobot {
         SmartDashboard.putNumber("Arm Angle", arm.getCurrentAngle());
         SmartDashboard.putNumber("Arm Target", arm.getTargetAngle());
         SmartDashboard.putBoolean("Arm At Home", arm.isAtHome());
-        SmartDashboard.putNumber("Error", arm.getCurrentAngle() - arm.getTargetAngle());
-//
-//        arm.setGains(
-//                SmartDashboard.getNumber("Kp"),
-//                SmartDashboard.getNumber("Ki"),
-//                SmartDashboard.getNumber("Kd")
-//        );
 
         double forwardDistance = drive.getForwardProximity().getDistanceInInches();
         SmartDashboard.putNumber("Forward Distance", forwardDistance);
