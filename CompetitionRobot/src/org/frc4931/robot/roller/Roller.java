@@ -22,22 +22,19 @@
 
 package org.frc4931.robot.roller;
 
-import org.frc4931.robot.components.InfraredSensor;
 import org.strongback.command.Requirable;
 import org.strongback.components.Motor;
+import org.strongback.components.Switch;
 
-public class Roller implements Requirable 
-{
-	private final InfraredSensor iA;
-	private final InfraredSensor iB;
+public class Roller implements Requirable {
 	private final Motor wheels;
-	
-	public Roller(Motor wheels,InfraredSensor iRSA,InfraredSensor iRSB) {
-		this.wheels = wheels;
-		iA = iRSA;
-		iB=  iRSB;
+    private final Switch ballIn;
+
+	public Roller(Motor rollerMotor, Switch ballIn) {
+        this.wheels = rollerMotor;
+        this.ballIn = ballIn;
 	}
-	
+
 	/*
 	 * Pulls a ball in.
 	 */
@@ -63,6 +60,6 @@ public class Roller implements Requirable
 	 * Checks if a ball is in.
 	 */
 	public boolean ballIn() {
-		return iA.getInput() && iB.getInput();
+		return ballIn.isTriggered();
 	}
 }
