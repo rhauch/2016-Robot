@@ -22,7 +22,6 @@
 
 package org.frc4931.robot.roller;
 
-import org.frc4931.robot.components.InfraredSensor;
 import org.strongback.command.Requirable;
 import org.strongback.components.Motor;
 import org.strongback.components.Switch;

@@ -28,7 +28,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.frc4931.robot.arm.Arm;
 import org.frc4931.robot.arm.LowerArmWhile;
 import org.frc4931.robot.arm.RaiseArmWhile;
-import org.frc4931.robot.components.InfraredSensor;
 import org.frc4931.robot.components.IMU;
 import org.frc4931.robot.drive.DriveSystem;
 import org.frc4931.robot.drive.TimedDrive;
