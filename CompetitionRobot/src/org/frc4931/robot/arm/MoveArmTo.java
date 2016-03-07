@@ -33,7 +33,7 @@ public class MoveArmTo extends org.strongback.command.Command {
     private final double targetAngle;
 
     /**
-     * Create a command with the desired target angle.
+     * Create a command with the desired target angle and default PID gains.
      *
      * @param arm arm inputed
      * @param targetAngle degrees desired
