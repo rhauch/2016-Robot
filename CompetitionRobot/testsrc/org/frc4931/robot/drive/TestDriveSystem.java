@@ -22,27 +22,27 @@
 
 package org.frc4931.robot.drive;
 
-import org.frc4931.robot.components.MockIMU;
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.strongback.drive.TankDrive;
 import org.strongback.mock.Mock;
+import org.strongback.mock.MockDistanceSensor;
 import org.strongback.mock.MockMotor;
-
-import static org.junit.Assert.assertEquals;
 
 public class TestDriveSystem {
     private MockMotor leftMotor;
     private MockMotor rightMotor;
-    private MockIMU imu;
+    private MockDistanceSensor forwardProximity;
     private DriveSystem driveSystem;
 
     @Before
     public void beforeEach() {
         leftMotor = Mock.stoppedMotor();
         rightMotor = Mock.stoppedMotor();
-        imu = new MockIMU();
-        driveSystem = new DriveSystem(new TankDrive(leftMotor, rightMotor), imu);
+        forwardProximity = Mock.distanceSensor();
+        driveSystem = new DriveSystem(new TankDrive(leftMotor, rightMotor), forwardProximity);
     }
 
     /**

@@ -20,39 +20,28 @@
  * SOFTWARE.
  */
 
-package org.frc4931.robot.arm;
+package org.frc4931.robot.math;
 
-import org.strongback.command.Command;
-import org.strongback.control.TalonController;
+public class PIDGains {
+    private final double p;
+    private final double i;
+    private final double d;
 
-/**
- * Lowers the arm until the home switch is triggered. After that, the arm is zeroed.`
- */
-public class CalibrateArm extends Command {
-    private final Arm arm;
-
-    public CalibrateArm(Arm arm) {
-        super(arm);
-        this.arm = arm;
+    public PIDGains(double p, double i, double d) {
+        this.p = p;
+        this.i = i;
+        this.d = d;
     }
 
-    @Override
-    public void initialize() {
-//        arm.setSoftLimitsEnabled(false);
-        arm.setControlMode(TalonController.ControlMode.PERCENT_VBUS);
-        arm.raise();
+    public double getP() {
+        return p;
     }
 
-    @Override
-    public boolean execute() {
-        return arm.isAtHome();
+    public double getI() {
+        return i;
     }
 
-    @Override
-    public void end() {
-        arm.stop();
-        pause(1.0);
-        arm.zero();
-//        arm.setSoftLimitsEnabled(true);
+    public double getD() {
+        return d;
     }
 }
