@@ -53,8 +53,8 @@ public class Robot extends IterativeRobot {
     private static final int LEFT_REAR_MOTOR_PWM_CHANNEL = 3;
     private static final int RIGHT_FRONT_MOTOR_PWM_CHANNEL = 0;
     private static final int RIGHT_REAR_MOTOR_PWM_CHANNEL = 1;
-    private static final int IR_SENSOR_A_DIO_CHANNEL =2;
-    private static final int IR_SENSOR_B_DIO_CHANNEL =3;
+    private static final int BALL_SENSOR_A_DIO_CHANNEL = 2;
+    private static final int BALL_SENSOR_B_DIO_CHANNEL = 3;
     private static final int ROLLER_MOTOR_CAN_ID = 0;
     private static final int ARM_MOTOR_CAN_ID = 1;
 
@@ -96,9 +96,9 @@ public class Robot extends IterativeRobot {
         arm = new Arm(armMotor);
 
         Motor rollerMotor = Hardware.Motors.talonSRX(ROLLER_MOTOR_CAN_ID);
-        InfraredSensor iSA=new InfraredSensor(IR_SENSOR_A_DIO_CHANNEL);
-        InfraredSensor iSB=new InfraredSensor(IR_SENSOR_B_DIO_CHANNEL);
-        roller = new Roller(rollerMotor,iSA,iSB);
+        Switch ballInA = Hardware.Switches.normallyOpen(BALL_SENSOR_A_DIO_CHANNEL);
+        Switch ballInB = Hardware.Switches.normallyOpen(BALL_SENSOR_B_DIO_CHANNEL);
+        roller = new Roller(rollerMotor, Switch.and(ballInA, ballInB));
 
 //        CameraServer.getInstance().setQuality(50);
 //        CameraServer.getInstance().startAutomaticCapture(new USBCamera());
