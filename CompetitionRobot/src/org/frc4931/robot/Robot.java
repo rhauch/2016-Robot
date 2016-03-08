@@ -66,8 +66,9 @@ public class Robot extends IterativeRobot {
     // 7 pulses per rev; 71:1 motor gearing ratio; 28:12 sprocket ratio; 360 degrees per rev
     private static final double ARM_PULSES_PER_DEGREE = 3.2213;
     public static final double ARM_HOME_ANGLE = 0.0;
-    public static final double ARM_LOW_ANGLE = 190.0;
-    public static final double ARM_HIGH_ANGLE = 130.0;
+    public static final double ARM_LOW_ANGLE = 190.0;   // lifting the portcullis
+    public static final double ARM_MID_ANGLE = 150.0;   // grabbing boulders
+    public static final double ARM_HIGH_ANGLE = 130.0;  // cheval de frise and portcullis
     public static final PIDGains ARM_DEFAULT_GAINS = new PIDGains(47.4, 0.015, 0.0);
 
     public static final double AUTO_DRIVE_SPEED=1;
@@ -83,9 +84,9 @@ public class Robot extends IterativeRobot {
     @Override
     public void robotInit() {
         Strongback.configure()
-                  .recordNoData().recordNoEvents().recordNoCommands();
-//                  .recordDataToFile(LOG_FILES_DIRECTORY_PATH)
-//                  .recordEventsToFile(LOG_FILES_DIRECTORY_PATH, 2097152);
+//                  .recordNoData().recordNoEvents().recordNoCommands();
+                  .recordDataToFile(LOG_FILES_DIRECTORY_PATH)
+                  .recordEventsToFile(LOG_FILES_DIRECTORY_PATH, 2097152);
 
         // Define the motors and the drive system ...
         Motor leftFrontMotor = Hardware.Motors.victorSP(LEFT_FRONT_MOTOR_PWM_CHANNEL);
@@ -134,8 +135,9 @@ public class Robot extends IterativeRobot {
         Switch armUpB = coDriverJoystick.getButton(3);
         Switch armDownB = coDriverJoystick.getButton(2);
         Switch armLow = coDriverJoystick.getButton(7);
+        Switch armMid = coDriverJoystick.getButton(11);
         Switch armHigh = coDriverJoystick.getButton(6);
-        Switch raisePortcullis = coDriverJoystick.getButton(12); // If other PID constants are needed
+        // Switch raisePortcullis = coDriverJoystick.getButton(12); // If other PID constants are needed
 
         // Register the functions that run when the switches change state ...
         SwitchReactor reactor = Strongback.switchReactor();
@@ -150,6 +152,7 @@ public class Robot extends IterativeRobot {
         reactor.onTriggeredSubmit(armUpB, () -> new RaiseArmWhile(arm, armUpB));
         reactor.onTriggeredSubmit(armDownB, () -> new LowerArmWhile(arm, armDownB));
         reactor.onTriggeredSubmit(armLow, () -> new MoveArmTo(arm, ARM_LOW_ANGLE));
+        reactor.onTriggeredSubmit(armMid, () -> new MoveArmTo(arm, ARM_MID_ANGLE));
         reactor.onTriggeredSubmit(armHigh, () -> new MoveArmTo(arm, ARM_HIGH_ANGLE));
 
         // Set up the data recorder to capture the left & right motor speeds and the sensivity.
