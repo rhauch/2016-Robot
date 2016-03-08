@@ -77,7 +77,7 @@ public class Robot extends IterativeRobot {
     public static final double ARM_LOW_ANGLE = 190.0;   // lifting the portcullis
     public static final double ARM_MID_ANGLE = 150.0;   // grabbing boulders
     public static final double ARM_HIGH_ANGLE = 130.0;  // cheval de frise and portcullis
-    public static final double ARM_CHEVAL_DOWN_ANGLE = 18.0;   // pushing down cheval de frise
+    public static final double ARM_CHEVAL_DOWN_ANGLE = 180.0;   // pushing down cheval de frise
     //public static final PIDGains ARM_DEFAULT_GAINS = new PIDGains(47.4, 0.015, 0.0);
     public static final PIDGains ARM_DEFAULT_GAINS = new PIDGains(100.4, 0.015, 0.0);
 
