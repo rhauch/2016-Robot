@@ -22,45 +22,46 @@
 package org.frc4931.robot.drive;
 
 import org.strongback.command.Command;
+import org.strongback.components.Switch;
 
 /**
  * The command that drives the robot at a constant forward and turn speed for a specific duration.
  */
-public class TimedDrive extends Command {
+public class DriveUntil extends Command {
 
     private final DriveSystem drive;
+    private final Switch stopSwitch;
     private final double driveSpeed;
-    private final double turnSpeed;
     
     /**
      * Create a new command that drives forward at the given speed and duration.
      * @param drive the chassis
      * @param driveSpeed the speed at which to drive forward; should be [-1.0, 1.0]
-     * @param duration the duration of this command; should be positive
+     * @param stopWhen the switch that signals the drive should stop
      */
-    public TimedDrive(DriveSystem drive, double driveSpeed, double duration) {
-        this(drive,driveSpeed,0.0,duration);
+    public DriveUntil(DriveSystem drive, double driveSpeed, Switch stopWhen) {
+        this(drive,driveSpeed,0.0,stopWhen);
     }
     
     /**
-     * Create a new command that drives at the given speed, turn speed, and duration.
+     * Create a new command that drives forward at the given speed and duration.
      * @param drive the chassis
      * @param driveSpeed the speed at which to drive forward; should be [-1.0, 1.0]
      * @param turnSpeed the speed at which to turn; should be [-1.0, 1.0]
-     * @param duration the duration of this command; should be positive
+     * @param stopWhen the switch that signals the drive should stop
      */
-    public TimedDrive(DriveSystem drive, double driveSpeed, double turnSpeed, double duration) {
-        super(duration, drive);
+    public DriveUntil(DriveSystem drive, double driveSpeed, double turnSpeed, Switch stopWhen) {
+        super(drive);
         this.drive = drive;
         this.driveSpeed = driveSpeed;
-        this.turnSpeed = turnSpeed;
+        this.stopSwitch = stopWhen;
     }
     
     @Override
     public boolean execute() {
     	System.out.print("is driving");
-        drive.arcade(driveSpeed, turnSpeed);
-        return false;   // not complete; it will time out automatically
+        drive.arcade(driveSpeed, 0.0);
+        return stopSwitch.isTriggered();
     }
     
     @Override
