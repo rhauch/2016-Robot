@@ -26,7 +26,6 @@ import org.frc4931.robot.math.PIDGains;
 import org.strongback.command.Requirable;
 import org.strongback.components.AngleSensor;
 import org.strongback.components.Switch;
-import org.strongback.components.TalonSRX.FeedbackDevice;
 import org.strongback.control.TalonController;
 
 /**
