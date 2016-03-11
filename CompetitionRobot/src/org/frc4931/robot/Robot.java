@@ -206,7 +206,7 @@ public class Robot extends IterativeRobot {
         
         AUTONOMOUS_SELECTION.clear();
         AUTONOMOUS_SELECTION.put(Auto.LOW_BAR, ()->new TimedDrive(drive,0.60,3.0));
-        AUTONOMOUS_SELECTION.put(Auto.MOAT, ()->new TimedDrive(drive,0.60,3.5));
+        AUTONOMOUS_SELECTION.put(Auto.MOAT, ()->new TimedDrive(drive,0.70,3.5));
         AUTONOMOUS_SELECTION.put(Auto.ROUGH_TERRAIN, ()->new TimedDrive(drive,0.75,2.5));
         AUTONOMOUS_SELECTION.put(Auto.RAMPARTS, ()->new TimedDrive(drive,0.65,3.75));
         AUTONOMOUS_SELECTION.put(Auto.ROCK_WALL, ()->new TimedDrive(drive,0.75,2.5));
