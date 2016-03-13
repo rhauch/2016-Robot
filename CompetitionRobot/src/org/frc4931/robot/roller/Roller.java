@@ -39,14 +39,14 @@ public class Roller implements Requirable {
 	 * Pulls a ball in.
 	 */
 	public void suck() {
-		wheels.setSpeed(-1.0);
+		wheels.setSpeed(1.0);
 	}
 	
 	/*
 	 * Pushes a ball out.
 	 */
 	public void spit() {
-		wheels.setSpeed(1.0);
+		wheels.setSpeed(-1.0);
 	}
 	
 	/*

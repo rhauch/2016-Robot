@@ -48,6 +48,7 @@ public class AutoChevalDeFrise extends CommandGroup {
                                     })),
                      new MoveArmTo(arm, Robot.ARM_CHEVAL_DOWN_ANGLE),
                      Command.pause(1.0),
+                     new TimedDrive(drive, 0.8, 0.5),
                      simultaneously(new MoveArmTo(arm, 5.0),
                                     new TimedDrive(drive, 0.8, 1.5)));
     }
