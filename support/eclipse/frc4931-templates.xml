@@ -5,8 +5,7 @@
               description="Comment for created Java files"
               enabled="true"
               id="org.eclipse.jdt.ui.text.codetemplates.filecomment"
-              name="filecomment">
-/*
+              name="filecomment">/*
  * Copyright (c) 2016 FRC Team 4931
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -27,5 +26,5 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-    </template>
+</template>
 </templates>
