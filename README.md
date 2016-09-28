@@ -29,7 +29,23 @@ $ git pull upstream master
 
 Your local Git repository is now connected to both your fork (e.g., `origin`) and the team's shared repository (e.g., `upstream`).
 
-In Eclipse, import the project(s) in your `2016-Robot` directory, as described [here](https://github.com/frc-4931/2014/wiki/Java#set-up-eclipse).
+Start Eclipse, and choose *File->Switch Workspace->Other*, in the dialog pick the directory that contains the `2016-Robot` directory and click OK. Eclipse will switch to that workspace, and it should open up with no projects.
+
+Then, choose *File->New->Other* and in the dialog type "Robot", then pick the new robot project, give the project a name, and when asked type in "4931" for the team number, and click okay. This will initialize the WPILib plugins for this workspace and set up a bunch of stuff. When that finishes, select the new project in the "Package Explorer" tab, right-mouse-click, and delete the project. (Unfortunately we have to do this every time we create a new Eclipse workspace so that the WPILib can properly initialize itself.)
+
+Finally, go back to your Git shell (in the `2016-Robot` directory) and type on Windows:
+
+    strongback.bat new-project -e -p com.myteam.robot -r MyRobotProject
+    
+or on OS X or Linux:
+
+    strongback.sh new-project -e -p com.myteam.robot -r MyRobotProject
+
+This command tells Strongback to set up the Eclipse workspace with the appropriate libraries.
+
+Now, go back to Eclipse, and in the same workspace we created before (and created a temporary robot project) import the project(s) in your `2016-Robot` directory, as described [here](https://github.com/frc-4931/2014/wiki/Java#set-up-eclipse). You can either choose to _not_ import the `LiveMap` and `NetworkTableServer` projects, or if you import them you can remove them from your workspace.
+
+Your Eclipse workspace should have a `CompetitionRobot` project and should show now errors.
 
 ### Build locally
 
